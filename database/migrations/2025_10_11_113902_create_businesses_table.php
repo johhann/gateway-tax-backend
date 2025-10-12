@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('businesses', function (Blueprint $table) {
             $table->id();
 
+            $table->foreignId('profile_id')->constrained();
             $table->string('name');
             $table->text('description');
             $table->string('address_line_one');
