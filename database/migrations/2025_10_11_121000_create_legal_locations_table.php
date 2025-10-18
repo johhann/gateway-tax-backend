@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('legal_id')->constrained()->cascadeOnDelete();
+            $table->string('value');
             $table->string('name');
 
             $table->timestamps();

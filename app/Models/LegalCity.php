@@ -12,6 +12,10 @@ class LegalCity extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $casts = [
+        'locations' => 'array',
+    ];
+
     public function legals(): HasMany
     {
         return $this->hasMany(Legal::class);
