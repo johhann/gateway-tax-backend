@@ -2,9 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Widgets\OrdersOverTimeChart;
-use App\Filament\Widgets\StatsOverview;
-use App\Filament\Widgets\TopSellingProductsChart;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -34,13 +31,13 @@ class AppPanelProvider extends PanelProvider
             ->path('/')
             ->login()
             ->colors([
-                'primary' => Color::Emerald,
-                'secondary' => Color::Yellow,
+                'primary' => '#40d643',
+                'secondary' => Color::Gray,
             ])
             ->font('Poppins')
-            ->brandLogo('logo.png')
-            ->favicon('favicon.png')
-            ->brandLogoHeight(fn () => Auth::check() ? '6rem' : '10rem')
+            ->brandLogo(asset('logo.png'))
+            ->favicon(asset('logo.png'))
+            ->brandLogoHeight(fn () => Auth::check() ? '3rem' : '5rem')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
@@ -48,14 +45,9 @@ class AppPanelProvider extends PanelProvider
             ])
             ->spa()
             ->databaseTransactions()
-            // ->databaseNotifications()
-            // ->databaseNotificationsPolling('30s')
             ->profile(isSimple: false)
             // ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                // StatsOverview::class,
-                // OrdersOverTimeChart::class,
-                // TopSellingProductsChart::class,
             ])
             ->middleware([
                 EncryptCookies::class,

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('legal_locations', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('legal_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('legal_city_id')->constrained()->cascadeOnDelete();
             $table->string('value');
             $table->string('name');
 

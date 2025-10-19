@@ -71,14 +71,13 @@ class LegalCitySeeder extends Seeder
         ];
 
         foreach ($cities as $city) {
-            $city = LegalCity::updateOrCreate(
+            $newCity = LegalCity::updateOrCreate(
                 ['name' => $city['name']],
             );
 
             if (isset($city['locations'])) {
-
                 foreach ($city['locations'] as $key => $location) {
-                    $city->locations()->create([
+                    $newCity->locations()->create([
                         'value' => $key,
                         'name' => $location,
                     ]);
