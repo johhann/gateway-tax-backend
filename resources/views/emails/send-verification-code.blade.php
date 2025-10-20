@@ -158,7 +158,7 @@
             style="max-width: 600px; margin: 0 auto; font-family: Arial, Helvetica, sans-serif; color: #333; background-color: #ffffff; border: 1px solid #eaeaea; border-radius: 8px; overflow: hidden;">
             <header style="background-color: #f9fafb; padding: 24px; text-align: center;">
                 <a href="{{ config('app.url') }}" target="_blank" style="text-decoration: none;">
-                    <img src="{{ asset('img/logo.jpg') }}" alt="{{ config('app.name') }}"
+                    <img src="{{ asset('logo.png') }}" alt="{{ config('app.name') }}"
                         style="width: 200px; height: auto; border: none;">
                 </a>
             </header>
