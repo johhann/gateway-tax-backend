@@ -81,7 +81,7 @@ return [
         'validate_csrf_token' => Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
     ],
 
-    'access_token' => env('ACCESS_TOKEN_TTL', default: 24 * 60),
-    'refresh_token' => env('REFRESH_TOKEN_TTL', default: 7 * 24 * 60),
-    'verification_token' => env('VERIFICATION_TOKEN_TTL', default: 15),
+    'access_token' => (int) env('ACCESS_TOKEN_TTL', default: 24 * 60),
+    'refresh_token' => (int) env('REFRESH_TOKEN_TTL', default: 7 * 24 * 60),
+    'verification_token' => (int) env('VERIFICATION_TOKEN_TTL', default: 15),
 ];

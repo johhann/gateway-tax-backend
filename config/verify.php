@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'ttl' => env('VERIFICATION_CODE_TTL', 10),
+    'ttl' => (int) env('VERIFICATION_CODE_TTL', 10),
 ];
