@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GoogleRequest;
 use App\Models\User;
@@ -33,7 +32,7 @@ class SocialiteController extends Controller
         $userAgent = $request->header('User-Agent');
 
         $token = Cache::get($socialiteToken);
-        abort_if(! $token, 403, 'Invalid credentials.');
+        abort_if(! $token, 403, 'Socialite token is invalid. Please try again');
 
         $data = Crypt::decryptString($token);
         abort_if($userAgent != $data, 403, 'Invalid token credentials.');
@@ -43,14 +42,16 @@ class SocialiteController extends Controller
         ], [
             'google_id' => $request->sub,
             'name' => $request->name,
-            'role' => UserRole::USER,
             'email_verified_at' => now(),
             'status' => true,
         ]);
 
-        abort_if($user->status != true, 404, 'Your account has been deactivated. Please contact support if you believe this is a mistake.');
+        abort_if($user->status != true, 404, 'Your account is not active. Please contact support if you believe this is a mistake.');
 
         $token = UserTokenService::getTokens($user);
+
+        // delete cache
+        Cache::forget($socialiteToken);
 
         return [
             'data' => $user,

@@ -42,6 +42,10 @@ class UserTokenService
             $user = User::find(Auth::id());
         }
 
+        if (! $user) {
+            return;
+        }
+
         if ($all) {
             $user->tokens()->forceDelete();
 
