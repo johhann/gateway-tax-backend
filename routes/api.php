@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1/auth/')
     ->group(function () {
         Route::post('login', [AuthController::class, 'login'])->name('login');
-        Route::post('resend-verification', [AuthController::class, 'resendVerification'])->name('login');
+        Route::post('resend-verification', [AuthController::class, 'resendVerification'])->name('resend-verification');
         Route::post('register', [RegisterController::class, 'store'])->name('users.register');
 
         Route::post('forgot-password', [ForgetPasswordController::class, 'initiate']);
