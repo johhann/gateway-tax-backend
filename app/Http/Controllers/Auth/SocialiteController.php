@@ -35,7 +35,7 @@ class SocialiteController extends Controller
         abort_if(! $token, 403, 'Socialite token is invalid. Please try again');
 
         $data = Crypt::decryptString($token);
-        abort_if($userAgent != $data, 403, 'Invalid token credentials.');
+        abort_if($userAgent != $data, 403, 'Socialite token is invalid. Please try again.');
 
         $user = User::firstOrCreate([
             'email' => $request->email,
