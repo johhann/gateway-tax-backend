@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\LicenseType;
+use App\Rules\StateValidation;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreIdentificationRequest extends FormRequest
 {
@@ -11,7 +14,7 @@ class StoreIdentificationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return Auth()->check();
     }
 
     /**
@@ -21,8 +24,14 @@ class StoreIdentificationRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            //
-        ];
+        return (function () {
+            return array_merge((new StoreAddressRequest)->rules(), [
+                'license_type' => ['required', 'string', Rule::in(LicenseType::values())],
+                'license_number' => 'required|string',
+                'issuing_state' => ['required', 'string', new StateValidation],
+                'license_issue_date' => ['required', 'date', 'before:license_expiration_date', 'before:today'],
+                'license_expiration_date' => ['required', 'date', 'after:license_issue_date', 'after_or_equal:today'],
+            ]);
+        })();
     }
 }

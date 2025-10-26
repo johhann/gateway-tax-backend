@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\StateValidation;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateAddressRequest extends FormRequest
@@ -11,7 +12,7 @@ class UpdateAddressRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return Auth()->check();
     }
 
     /**
@@ -22,7 +23,11 @@ class UpdateAddressRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'address' => 'sometimes|required|string',
+            'apt' => 'sometimes|nullable|string',
+            'zip_code' => 'sometimes|required|string',
+            'city' => 'sometimes|required|string',
+            'state' => ['sometimes', 'required', 'string', new StateValidation],
         ];
     }
 }

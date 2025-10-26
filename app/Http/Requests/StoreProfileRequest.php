@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\InformationSource;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreProfileRequest extends FormRequest
 {
@@ -11,7 +13,7 @@ class StoreProfileRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return Auth()->check();
     }
 
     /**
@@ -22,7 +24,16 @@ class StoreProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'first_name' => 'required|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'date_of_birth' => 'required|date',
+            'phone' => 'required|string|unique:users,phone',
+            'zip_code' => 'required|numeric|string',
+            //            "taxes_last_year" => ["required", Rule::in("Gateway Tax Service", "Jackson Hewitt", "H&R Block", "Liberty", "Turbo", "Other")],
+            'hear_from' => ['required', Rule::in(InformationSource::values())],
+            'occupation' => 'required|string',
+            'self_employment_income' => 'required|boolean',
         ];
     }
 }

@@ -4,6 +4,7 @@ namespace App\Enums;
 
 enum StateEnum: string
 {
+    use HasEnumValues;
     case Alabama = 'Alabama';
     case Alaska = 'Alaska';
     case Arizona = 'Arizona';
@@ -55,12 +56,4 @@ enum StateEnum: string
     case Wisconsin = 'Wisconsin';
     case Wyoming = 'Wyoming';
     case International = 'International';
-
-    /**
-     * Get all values as an array.
-     */
-    public static function values(): array
-    {
-        return array_column(self::cases(), 'value');
-    }
 }
