@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\IdentificationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UploadController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -54,5 +55,10 @@ Route::prefix('v1')->group(function () {
         Route::post('identification', [IdentificationController::class, 'store']);
         Route::get('identification', [IdentificationController::class, 'show']);
         Route::put('identification', [IdentificationController::class, 'update']);
+    });
+
+    Route::middleware(['auth:sanctum', 'ability:access-token'])->group(function () {
+        Route::post('upload', [UploadController::class, 'store']);
+        Route::delete('upload/{attachment}', [UploadController::class, 'destroy']);
     });
 });
