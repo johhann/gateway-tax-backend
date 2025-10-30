@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Profiles\Schemas;
 
 use App\Models\Profile;
 use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Flex;
@@ -89,7 +90,7 @@ class ProfileInfolist
                                 TextEntry::make('legal.address'),
                                 TextEntry::make('legal.filing_status'),
                                 TextEntry::make('legal.number_of_dependant'),
-                                RepeatableEntry::make('legal.spouse_information'),
+                                KeyValueEntry::make('legal.spouse_information'),
                             ])
                             ->columns(4),
 
@@ -119,6 +120,7 @@ class ProfileInfolist
                             ->columns(4),
 
                         Tab::make('Dependant')
+
                             ->badge(fn (Profile $record): ?string => $record->dependant()->count())
                             ->schema([
                                 RepeatableEntry::make('dependant')
@@ -139,8 +141,10 @@ class ProfileInfolist
                                         TextEntry::make('dependant.relationship')
                                             ->state(fn ($record) => $record->relationship),
                                     ])
+                                    ->placeholder('Dependant')
                                     ->columns(3)
                                     ->columnSpan(6)
+                                    ->contained(false)
                                     ->grid(2),
                             ])
                             ->columns(2)
