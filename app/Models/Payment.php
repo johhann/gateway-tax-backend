@@ -12,6 +12,11 @@ class Payment extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $casts = [
+        'type' => 'json',
+        'direct_deposit_info' => 'json',
+    ];
+
     public function profile(): BelongsTo
     {
         return $this->belongsTo(Profile::class);

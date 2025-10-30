@@ -2,6 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Enums\UserRole;
+use App\Models\TaxStation;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,8 +19,21 @@ class ProfileFactory extends Factory
      */
     public function definition(): array
     {
+        $taxStations = TaxStation::pluck('id');
+        $users = User::where('role', UserRole::USER)->pluck('id');
+
         return [
-            //
+            'user_id' => $this->faker->unique()->randomElement($users),
+            'tax_station_id' => $this->faker->randomElement($taxStations),
+            'first_name' => $this->faker->firstName,
+            'middle_name' => $this->faker->optional()->firstName,
+            'last_name' => $this->faker->lastName,
+            'phone' => $this->faker->phoneNumber,
+            'date_of_birth' => $this->faker->dateTimeBetween('-60 years', '-18 years'),
+            'zip_code' => $this->faker->postcode,
+            'hear_from' => $this->faker->randomElement(['Social Media', 'Friend', 'Advertisement', 'Website']),
+            'occupation' => $this->faker->jobTitle,
+            'self_employment_income' => $this->faker->boolean(30), // 30% chance of true
         ];
     }
 }

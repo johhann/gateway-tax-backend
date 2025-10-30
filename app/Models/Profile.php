@@ -43,4 +43,14 @@ class Profile extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function identification(): HasOne
+    {
+        return $this->hasOne(Identification::class);
+    }
+
+    public function payment(): HasOne
+    {
+        return $this->hasOne(Payment::class);
+    }
 }

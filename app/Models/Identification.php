@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\LicenseType;
+use App\Enums\StateEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,7 +15,10 @@ class Identification extends Model
     use SoftDeletes;
 
     protected $casts = [
-        'id_type' => LicenseType::class,
+        'license_type' => LicenseType::class,
+        'issuing_state' => StateEnum::class,
+        'license_issue_date' => 'date',
+        'license_expiration_date' => 'date',
     ];
 
     public function profile(): BelongsTo

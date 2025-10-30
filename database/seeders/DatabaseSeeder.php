@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRole;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -24,7 +25,14 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Gateway Manger',
             'email' => 'admin@gateway.com',
+            'role' => UserRole::ADMIN,
             'password' => bcrypt('password'),
+        ]);
+
+        User::factory(50)->create();
+
+        $this->call([
+            ProfileSeeder::class,
         ]);
 
         DB::commit();
