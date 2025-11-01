@@ -20,4 +20,15 @@ enum ProfileUserStatus: string
             self::CHANGE_REQUEST->value,
         ];
     }
+
+    public function color(): string
+    {
+        return match ($this) {
+            self::SUBMITTED => 'secondary',
+            self::PROCESSING => 'warning',
+            self::PROCESSED => 'success',
+            self::ACCEPTED => 'primary',
+            self::CHANGE_REQUEST => 'danger',
+        };
+    }
 }

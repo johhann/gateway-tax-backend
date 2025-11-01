@@ -33,11 +33,11 @@ class AppServiceProvider extends ServiceProvider
                 ->iconButton();
         });
 
-        CreateAction::configureUsing(function ($action) {
-            return $action
-                ->slideOver()
-                ->iconButton();
-        });
+        // CreateAction::configureUsing(function ($action) {
+        //     return $action
+        //         ->slideOver()
+        //         ->iconButton();
+        // });
 
         DeleteAction::configureUsing(function ($action) {
             return $action

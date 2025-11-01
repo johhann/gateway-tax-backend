@@ -24,15 +24,12 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'status' => 'boolean',
-            'role' => UserRole::class,
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'status' => 'boolean',
+        'role' => UserRole::class,
+    ];
 
     public function branch()
     {
@@ -48,5 +45,30 @@ class User extends Authenticatable
     public function assignedTo()
     {
         return $this->hasMany(Profile::class, 'assigned_user_id');
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === UserRole::ADMIN;
+    }
+
+    public function isOperation(): bool
+    {
+        return $this->role === UserRole::OPERATION;
+    }
+
+    public function isBranchManager(): bool
+    {
+        return $this->role === UserRole::BRANCH_MANAGER;
+    }
+
+    public function isAccountant(): bool
+    {
+        return $this->role === UserRole::ACCOUNTANT;
+    }
+
+    public function isUser(): bool
+    {
+        return $this->role === UserRole::USER;
     }
 }

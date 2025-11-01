@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Enums\ProfileProgressStatus;
 use App\Enums\ProfileUserStatus;
 use App\Enums\UserRole;
+use App\Models\Branch;
 use App\Models\TaxStation;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -23,10 +24,14 @@ class ProfileFactory extends Factory
     {
         $taxStations = TaxStation::pluck('id');
         $users = User::where('role', UserRole::USER)->pluck('id');
+        $accountants = User::where('role', UserRole::ACCOUNTANT)->get();
+        $branches = Branch::pluck('id');
 
         return [
             'user_id' => $this->faker->unique()->randomElement($users),
             'tax_station_id' => $this->faker->randomElement($taxStations),
+            'assigned_branch_id' => $branch = $this->faker->randomElement($branches),
+            'assigned_user_id' => $accountants->where('branch_id', $branch)->random(),
             'first_name' => $this->faker->firstName,
             'middle_name' => $this->faker->optional()->firstName,
             'last_name' => $this->faker->lastName,

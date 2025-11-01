@@ -20,7 +20,7 @@ class Branch extends Model
 
     public function profiles(): HasMany
     {
-        return $this->hasMany(Profile::class);
+        return $this->hasMany(Profile::class, 'assigned_branch_id');
     }
 
     public function legalLocation(): BelongsTo

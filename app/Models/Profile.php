@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Enums\ProfileProgressStatus;
+use App\Enums\ProfileUserStatus;
+use App\Models\Scopes\ProfileScope;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,12 +13,18 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+#[ScopedBy(ProfileScope::class)]
 class Profile extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
     protected $appends = ['name'];
+
+    protected $casts = [
+        'publish_status' => ProfileProgressStatus::class,
+        'user_status' => ProfileUserStatus::class,
+    ];
 
     public function address(): HasOne
     {
@@ -54,6 +64,16 @@ class Profile extends Model
     public function payment(): HasOne
     {
         return $this->hasOne(Payment::class);
+    }
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class, 'assigned_branch_id');
+    }
+
+    public function assignedTo(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_user_id');
     }
 
     protected function getNameAttribute(): string

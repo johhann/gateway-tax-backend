@@ -12,6 +12,8 @@ use App\Filament\Resources\Profiles\Schemas\ProfileInfolist;
 use App\Filament\Resources\Profiles\Tables\ProfilesTable;
 use App\Models\Profile;
 use BackedEnum;
+use Filament\Pages\Enums\SubNavigationPosition;
+use Filament\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -23,9 +25,16 @@ class ProfileResource extends Resource
 {
     protected static ?string $model = Profile::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::Users;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Identification;
 
     protected static ?string $recordTitleAttribute = 'first_name';
+
+    protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -66,4 +75,12 @@ class ProfileResource extends Resource
                 SoftDeletingScope::class,
             ]);
     }
+
+    // public static function getRecordSubNavigation(Page $page): array
+    // {
+    //     return $page->generateNavigationItems([
+    //         Pages\CreateProfile::class,
+    //         Pages\ViewProfile::class,
+    //     ]);
+    // }
 }

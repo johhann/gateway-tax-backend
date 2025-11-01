@@ -25,12 +25,12 @@ class ProfileInfolist
                     Section::make([
                         Fieldset::make('Basic Information')
                             ->schema([
-                                TextEntry::make('taxStation.name')
-                                    ->label('Tax station'),
                                 TextEntry::make('first_name'),
                                 TextEntry::make('middle_name')
                                     ->placeholder('-'),
                                 TextEntry::make('last_name'),
+                                TextEntry::make('taxStation.name')
+                                    ->label('Tax station'),
                                 TextEntry::make('phone'),
                                 TextEntry::make('date_of_birth')
                                     ->date(),
@@ -43,6 +43,7 @@ class ProfileInfolist
                                 TextEntry::make('hear_from'),
                                 TextEntry::make('occupation'),
                                 IconEntry::make('self_employment_income')
+                                    ->label('Self Employed')
                                     ->boolean(),
                                 TextEntry::make('updated_at')
                                     ->label('Last updated at')

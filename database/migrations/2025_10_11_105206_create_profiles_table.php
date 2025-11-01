@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ProfileProgressStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -27,7 +28,7 @@ return new class extends Migration
             $table->string('hear_from');
             $table->string('occupation');
             $table->boolean('self_employment_income')->default(false);
-            $table->string('progress_status')->default();
+            $table->string('progress_status')->default(ProfileProgressStatus::PENDING->value);
             $table->string('user_status');
 
             $table->timestamps();

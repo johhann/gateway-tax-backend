@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\Users\Schemas;
 
 use App\Enums\UserRole;
-use Filament\Forms\Components\DateTimePicker;
+use App\Models\Branch;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -26,15 +26,13 @@ class UserForm
                 Select::make('role')
                     ->options(UserRole::class)
                     ->required(),
-                DateTimePicker::make('email_verified_at'),
                 TextInput::make('password')
                     ->password(),
-                TextInput::make('google_id'),
-                TextInput::make('facebook_id'),
+                Select::make('branch_id')
+                    ->relationship('branch', 'name')
+                    ->options(Branch::pluck('name', 'id')),
                 Toggle::make('status')
                     ->required(),
-                TextInput::make('branch_id')
-                    ->numeric(),
             ]);
     }
 }

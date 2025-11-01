@@ -47,8 +47,7 @@ class AppPanelProvider extends PanelProvider
             ->databaseTransactions()
             ->profile(isSimple: false)
             // ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
-            ->widgets([
-            ])
+            ->widgets([])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

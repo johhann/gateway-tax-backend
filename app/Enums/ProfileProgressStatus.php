@@ -22,4 +22,16 @@ enum ProfileProgressStatus: string
             self::COMPLETED->value,
         ];
     }
+
+    public function color(): ?string
+    {
+        return match ($this) {
+            self::PENDING => 'warning',
+            self::ASSIGNED => 'info',
+            self::PROCESSED => 'success',
+            self::PAUSED => 'warning',
+            self::CANCELLED => 'danger',
+            self::COMPLETED => 'success',
+        };
+    }
 }

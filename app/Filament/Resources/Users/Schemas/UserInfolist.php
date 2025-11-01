@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Users\Schemas;
 
-use App\Models\User;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
@@ -20,27 +19,14 @@ class UserInfolist
                     ->label('Email address'),
                 TextEntry::make('role')
                     ->badge(),
-                TextEntry::make('email_verified_at')
-                    ->dateTime()
-                    ->placeholder('-'),
-                TextEntry::make('google_id')
-                    ->placeholder('-'),
-                TextEntry::make('facebook_id')
-                    ->placeholder('-'),
                 IconEntry::make('status')
                     ->boolean(),
-                TextEntry::make('branch_id')
+                TextEntry::make('branch.name')
                     ->numeric()
                     ->placeholder('-'),
                 TextEntry::make('created_at')
                     ->dateTime()
                     ->placeholder('-'),
-                TextEntry::make('updated_at')
-                    ->dateTime()
-                    ->placeholder('-'),
-                TextEntry::make('deleted_at')
-                    ->dateTime()
-                    ->visible(fn (User $record): bool => $record->trashed()),
             ]);
     }
 }

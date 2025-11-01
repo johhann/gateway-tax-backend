@@ -27,7 +27,7 @@ class UsersTable
                 TextColumn::make('phone')
                     ->searchable(),
                 TextColumn::make('email')
-                    ->label('Email address')
+                    ->copyable()
                     ->searchable(),
                 TextColumn::make('role')
                     ->badge()
