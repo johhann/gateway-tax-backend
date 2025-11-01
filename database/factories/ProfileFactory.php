@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Enums\ProfileProgressStatus;
+use App\Enums\ProfileUserStatus;
 use App\Enums\UserRole;
 use App\Models\TaxStation;
 use App\Models\User;
@@ -33,7 +35,9 @@ class ProfileFactory extends Factory
             'zip_code' => $this->faker->postcode,
             'hear_from' => $this->faker->randomElement(['Social Media', 'Friend', 'Advertisement', 'Website']),
             'occupation' => $this->faker->jobTitle,
-            'self_employment_income' => $this->faker->boolean(30), // 30% chance of true
+            'self_employment_income' => $this->faker->boolean(60), // 30% chance of true
+            'progress_status' => $this->faker->randomElement(ProfileProgressStatus::getValues()),
+            'user_status' => $this->faker->randomElement(ProfileUserStatus::getValues()),
         ];
     }
 }

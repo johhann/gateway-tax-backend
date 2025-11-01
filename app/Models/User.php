@@ -33,4 +33,20 @@ class User extends Authenticatable
             'role' => UserRole::class,
         ];
     }
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
+    }
+
+    public function profile()
+    {
+        return $this->hasMany(Profile::class, 'user_id');
+    }
+
+    // assigned to
+    public function assignedTo()
+    {
+        return $this->hasMany(Profile::class, 'assigned_user_id');
+    }
 }

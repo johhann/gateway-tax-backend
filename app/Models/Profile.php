@@ -14,6 +14,8 @@ class Profile extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $appends = ['name'];
+
     public function address(): HasOne
     {
         return $this->hasOne(Address::class);
@@ -52,5 +54,10 @@ class Profile extends Model
     public function payment(): HasOne
     {
         return $this->hasOne(Payment::class);
+    }
+
+    protected function getNameAttribute(): string
+    {
+        return $this->first_name.' '.$this->middle_name.' '.$this->last_name;
     }
 }

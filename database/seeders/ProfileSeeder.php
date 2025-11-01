@@ -55,10 +55,10 @@ class ProfileSeeder extends Seeder
                     'work_phone' => fake()->phoneNumber(),
                     'home_phone' => fake()->phoneNumber(),
                     'website' => fake()->url(),
-                    'has_1099_misc' => fake()->boolean(30), // 30% chance of true
-                    'is_license_requirement' => fake()->boolean(30), // 30% chance of true
-                    'has_business_license' => fake()->boolean(30), // 30% chance of true
-                    'file_taxed_for_tax_year' => fake()->boolean(30), // 30% chance of true
+                    'has_1099_misc' => fake()->boolean(),
+                    'is_license_requirement' => fake()->boolean(),
+                    'has_business_license' => fake()->boolean(),
+                    'file_taxed_for_tax_year' => fake()->boolean(),
                     'business_advertisement' => fake()->realText(),
                     'advertise_through' => fake()->randomElements([
                         'Newspapers',

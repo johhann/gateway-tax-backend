@@ -15,7 +15,7 @@ class Legal extends Model
     use SoftDeletes;
 
     protected $casts = [
-        'spouse_information' => 'json',
+        'spouse_information' => 'array',
     ];
 
     public function profile(): BelongsTo

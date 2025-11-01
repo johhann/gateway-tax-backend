@@ -7,6 +7,7 @@ use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
@@ -22,47 +23,34 @@ class ProfileInfolist
             ->components([
                 Flex::make([
                     Section::make([
-
-                        // TextEntry::make('user.name')
-                        //     ->label('User'),
-                        TextEntry::make('taxStation.name')
-                            ->label('Tax station'),
-                        TextEntry::make('first_name'),
-                        TextEntry::make('middle_name')
-                            ->placeholder('-'),
-                        TextEntry::make('last_name'),
-                        TextEntry::make('phone'),
-                        TextEntry::make('date_of_birth')
-                            ->date(),
-                    ])
-                        ->columns(3)
-                        ->columnSpan(3),
-                    Section::make([
-                        TextEntry::make('zip_code'),
-                        TextEntry::make('hear_from'),
-                        TextEntry::make('occupation'),
-                        IconEntry::make('self_employment_income')
-                            ->boolean(),
-                        // TextEntry::make('created_at')
-                        //     ->dateTime()
-                        //     ->placeholder('-'),
-                        TextEntry::make('updated_at')
-                            ->label('Last updated at')
-                            ->dateTime('M d, Y h:i A')
-                            ->placeholder('-'),
-                        // TextEntry::make('deleted_at')
-                        //     ->dateTime()
-                        //     ->visible(fn (Profile $record): bool => $record->trashed()),
-                    ])
-                        ->columns(3)
-                        ->columnSpan(3),
-                ])
-                    ->from('md')
-                    ->columnSpanFull(),
-
-                Tabs::make('Tabs')
-                    ->tabs([
-                        Tab::make('Address')
+                        Fieldset::make('Basic Information')
+                            ->schema([
+                                TextEntry::make('taxStation.name')
+                                    ->label('Tax station'),
+                                TextEntry::make('first_name'),
+                                TextEntry::make('middle_name')
+                                    ->placeholder('-'),
+                                TextEntry::make('last_name'),
+                                TextEntry::make('phone'),
+                                TextEntry::make('date_of_birth')
+                                    ->date(),
+                            ])
+                            ->columns(3)
+                            ->columnSpan(6),
+                        Fieldset::make('Additional Information')
+                            ->schema([
+                                TextEntry::make('zip_code'),
+                                TextEntry::make('hear_from'),
+                                TextEntry::make('occupation'),
+                                IconEntry::make('self_employment_income')
+                                    ->boolean(),
+                                TextEntry::make('updated_at')
+                                    ->label('Last updated at')
+                                    ->dateTime('M d, Y h:i A')
+                                    ->placeholder('-'),
+                            ])
+                            ->columnSpan(3),
+                        Fieldset::make('Address')
                             ->schema([
                                 TextEntry::make('address.address'),
                                 TextEntry::make('address.apt'),
@@ -70,54 +58,101 @@ class ProfileInfolist
                                 TextEntry::make('address.state'),
                                 TextEntry::make('address.zip_code'),
                             ])
-                            ->columns(4),
-                        Tab::make('Identification')
-                            ->schema([
-                                TextEntry::make('identification.license_type'),
-                                TextEntry::make('identification.issuing_state'),
-                                TextEntry::make('identification.license_number'),
-                                TextEntry::make('identification.license_issue_date')
-                                    ->date(),
-                                TextEntry::make('identification.license_expiration_date')
-                                    ->date()
-                                    ->color(Color::Red),
-                            ])
-                            ->columns(4),
+                            ->columnSpan(3),
+                    ])
+                        ->columns(3)
+                        ->grow(true)
+                        ->columnSpan(4),
+                    Section::make([
+                        TextEntry::make('identification.license_type'),
+                        TextEntry::make('identification.issuing_state'),
+                        TextEntry::make('identification.license_number'),
+                        TextEntry::make('identification.license_issue_date')
+                            ->date(),
+                        TextEntry::make('identification.license_expiration_date')
+                            ->date()
+                            ->color(Color::Red),
+                    ])
+                        ->columns(1)
+                        ->grow(false)
+                        ->columnSpan(2),
+                ])
+                    ->from('md')
+                    ->columnSpanFull(),
+
+                Fieldset::make('Business')
+                    ->visible(fn (Profile $record) => $record->self_employment_income)
+                    ->extraAttributes([
+                        'class' => 'bg-white rounded-xl p-4 shadow-sm border border-gray-200',
+                    ])
+                    ->schema([
+                        TextEntry::make('business.name'),
+                        TextEntry::make('business.city'),
+                        TextEntry::make('business.state'),
+                        TextEntry::make('business.zip_code'),
+                        TextEntry::make('business.work_phone'),
+                        TextEntry::make('business.home_phone'),
+                        TextEntry::make('business.address_line_one'),
+                        TextEntry::make('business.address_line_two'),
+                        TextEntry::make('business.website')
+                            ->url(fn ($record) => $record->business['website'])
+                            ->color(Color::Blue),
+                        IconEntry::make('business.has_1099_misc')
+                            ->boolean(),
+                        IconEntry::make('business.is_license_requirement')
+                            ->boolean(),
+                        IconEntry::make('business.has_business_license')
+                            ->boolean(),
+                        TextEntry::make('business.description'),
+                        TextEntry::make('business.business_advertisement'),
+                        IconEntry::make('business.file_taxed_for_file_year')
+                            ->boolean(),
+                    ])
+                    ->columns(4)
+                    ->columnSpanFull(),
+                Tabs::make('Tabs')
+                    ->tabs([
                         Tab::make('Legal')
                             ->schema([
-                                TextEntry::make('legal.city.name'),
-                                TextEntry::make('legal.social_security_number'),
-                                TextEntry::make('legal.address'),
-                                TextEntry::make('legal.filing_status'),
-                                TextEntry::make('legal.number_of_dependant'),
-                                KeyValueEntry::make('legal.spouse_information'),
-                            ])
-                            ->columns(4),
 
-                        Tab::make('Business')
-                            ->visible(fn (Profile $record) => $record->self_employment_income)
-                            ->schema([
-                                TextEntry::make('business.name'),
-                                TextEntry::make('business.description'),
-                                TextEntry::make('business.address_line_one'),
-                                TextEntry::make('business.address_line_two'),
-                                TextEntry::make('business.city'),
-                                TextEntry::make('business.state'),
-                                TextEntry::make('business.zip_code'),
-                                TextEntry::make('business.work_phone'),
-                                TextEntry::make('business.home_phone'),
-                                TextEntry::make('business.website'),
-                                IconEntry::make('business.has_1099_misc')
-                                    ->boolean(),
-                                IconEntry::make('business.is_license_requirement')
-                                    ->boolean(),
-                                IconEntry::make('business.has_business_license')
-                                    ->boolean(),
-                                IconEntry::make('business.file_taxed_for_file_year')
-                                    ->boolean(),
-                                TextEntry::make('business.business_advertisement'),
-                            ])
-                            ->columns(4),
+                                Flex::make([
+                                    Section::make([
+
+                                        TextEntry::make('legal.city.name'),
+                                        TextEntry::make('legal.social_security_number'),
+                                        TextEntry::make('legal.address'),
+                                        TextEntry::make('legal.filing_status'),
+                                        TextEntry::make('legal.number_of_dependant'),
+                                    ])
+                                        ->columns(3)
+                                        ->columnSpan(4),
+                                    Section::make([
+                                        KeyValueEntry::make('legal.spouse_information')
+                                            ->label('Spouse Information')
+                                            ->visible(fn ($record) => ! empty($record->legal['spouse_information']))
+                                            ->state(function ($record) {
+                                                $spouse = $record->legal['spouse_information'] ?? null;
+
+                                                if (! $spouse) {
+                                                    return null;
+                                                }
+
+                                                return [
+                                                    'First Name' => $spouse['first_name'] ?? '-',
+                                                    'Middle Name' => $spouse['middle_name'] ?? '-',
+                                                    'Last Name' => $spouse['last_name'] ?? '-',
+                                                    'Date of Birth' => isset($spouse['date_of_birth']['date'])
+                                                        ? \Carbon\Carbon::parse($spouse['date_of_birth']['date'])->format('Y-m-d')
+                                                        : '-',
+                                                    'SSN' => $spouse['social_security_number'] ?? '-',
+                                                ];
+                                            }),
+                                    ])
+                                        ->columnSpan(2)
+                                        ->grow(false),
+                                ])
+                                    ->from('md'),
+                            ]),
 
                         Tab::make('Dependant')
 
@@ -144,14 +179,13 @@ class ProfileInfolist
                                     ->placeholder('Dependant')
                                     ->columns(3)
                                     ->columnSpan(6)
-                                    ->contained(false)
                                     ->grid(2),
                             ])
                             ->columns(2)
                             ->columnSpanFull(),
                     ])
                     ->columnSpanFull()
-                    ->activeTab(4),
+                    ->activeTab(1),
             ]);
     }
 }
