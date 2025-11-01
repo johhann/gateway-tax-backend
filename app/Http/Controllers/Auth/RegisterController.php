@@ -25,6 +25,7 @@ class RegisterController extends Controller
         ], values: [
             'name' => $request->name,
             'phone' => $request->phone,
+            'role' => UserRole::USER,
             'password' => Hash::make($request->password),
             'status' => true,
         ]);
