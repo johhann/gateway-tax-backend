@@ -31,6 +31,8 @@ class StoreIdentificationRequest extends FormRequest
                 'issuing_state' => ['required', 'string', new StateValidation],
                 'license_issue_date' => ['required', 'date', 'before:license_expiration_date', 'before:today'],
                 'license_expiration_date' => ['required', 'date', 'after:license_issue_date', 'after_or_equal:today'],
+                'license_front_image_id' => ['required', 'exists:attachments,id'],
+                'license_back_image_id' => ['required', 'exists:attachments,id'],
             ]);
         })();
     }

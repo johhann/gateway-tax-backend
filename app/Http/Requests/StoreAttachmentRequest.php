@@ -24,6 +24,7 @@ class StoreAttachmentRequest extends FormRequest
         return [
             'collection_name' => 'required|string|max:100',
             'file' => 'required|file|max:20480',
+            'metadata' => 'nullable|string',
         ];
     }
 }

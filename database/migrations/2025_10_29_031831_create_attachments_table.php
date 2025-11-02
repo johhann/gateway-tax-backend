@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->nullableMorphs('record');
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('metadata')->nullable();
+            $table->string('collection_name')->index();
             $table->timestamps();
             $table->softDeletes();
         });

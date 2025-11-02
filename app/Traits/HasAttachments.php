@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\Models\Attachment;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Validation\ValidationException;
 
 trait HasAttachments
@@ -11,6 +12,11 @@ trait HasAttachments
     public function attachments(): MorphMany
     {
         return $this->morphMany(Attachment::class, 'record');
+    }
+
+    public function attachment(): MorphToMany
+    {
+        return $this->attachments()->latest();
     }
 
     public function attachAttachments(array|int $attachmentIds): void

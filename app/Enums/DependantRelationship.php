@@ -4,6 +4,7 @@ namespace App\Enums;
 
 enum DependantRelationship: string
 {
+    use HasEnumValues;
     case Son = 'Son';
     case Daughter = 'Daughter';
     case StepChild = 'StepChild';

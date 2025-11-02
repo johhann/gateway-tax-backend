@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProfileResource extends JsonResource
+class DepandantResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,16 +16,14 @@ class ProfileResource extends JsonResource
     {
         return [
             'id' => $this->resource->id,
+            'profile_id' => $this->resource->profile_id,
+            'social_security_number' => $this->resource->social_security_number,
             'first_name' => $this->resource->first_name,
             'middle_name' => $this->resource->middle_name,
             'last_name' => $this->resource->last_name,
-            'date_of_birth' => $this->resource->date_of_birth->toDateString(),
-            'phone' => $this->resource->phone,
-            'zip_code' => $this->resource->zip_code,
-            'tax_station_id' => $this->resource->tax_station_id,
-            'hear_from' => $this->resource->hear_from,
+            'date_of_birth' => $this->resource->date_of_birth,
             'occupation' => $this->resource->occupation,
-            'self_employment_income' => (bool) $this->resource->self_employment_income,
+            'relationship' => $this->resource->relationship,
         ];
     }
 }

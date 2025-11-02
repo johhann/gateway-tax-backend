@@ -41,7 +41,7 @@ class Profile extends Model
         return $this->hasOne(Legal::class)->latestOfMany();
     }
 
-    public function dependant(): HasMany
+    public function dependants(): HasMany
     {
         return $this->hasMany(Dependant::class);
     }

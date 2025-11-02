@@ -32,6 +32,7 @@ return new class extends Migration
             $table->string('business_advertisement')->nullable();
             $table->jsonb('advertise_through')->nullable();
             $table->jsonb('records')->nullable();
+            $table->string('other_record')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

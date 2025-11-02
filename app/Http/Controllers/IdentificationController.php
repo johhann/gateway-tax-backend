@@ -15,14 +15,6 @@ use Throwable;
 class IdentificationController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @throws Throwable
@@ -49,6 +41,9 @@ class IdentificationController extends Controller
                 'license_expiration_date' => $validated['license_expiration_date'],
             ]);
 
+            $attachments = array_merge($validated['license_front_image_id'], $validated['license_back_image_id']);
+            $identification->attachAttachments($attachments);
+
             $address = Address::create([
                 'profile_id' => $profile->id,
                 'address' => $validated['address'],
@@ -62,6 +57,8 @@ class IdentificationController extends Controller
         return response()->json([
             'identification' => new IdentificationResource($identification),
             'address' => new AddressResource($address),
+            'license_front_image_id' => $identification->attachments()->where('metadata', 'license_front')->pluck('id'),
+            'license_back_image_id' => $identification->attachments()->where('metadata', 'license_back')->pluck('id'),
         ], 201);
     }
 
@@ -81,6 +78,8 @@ class IdentificationController extends Controller
         return response()->json([
             'identification' => $identification ? new IdentificationResource($identification) : null,
             'address' => $address ? new AddressResource($address) : null,
+            'license_front_image_id' => $identification ? $identification->attachments()->where('metadata', 'license_front')->pluck('id') : [],
+            'license_back_image_id' => $identification ? $identification->attachments()->where('metadata', 'license_back')->pluck('id') : [],
         ]);
     }
 
@@ -129,6 +128,18 @@ class IdentificationController extends Controller
                     $address = Address::create($addrData);
                 }
             }
+
+            if (array_key_exists('license_front_image_id', $validated)) {
+                $frontAttachments = $identification->attachments()->where('metadata', 'license_front')->pluck('id')->toArray();
+                $identification->detachAttachments($frontAttachments);
+                $identification->attachAttachments($validated['license_front_image_id']);
+            }
+
+            if (array_key_exists('license_back_image_id', $validated)) {
+                $backAttachments = $identification->attachments()->where('metadata', 'license_back')->pluck('id')->toArray();
+                $identification->detachAttachments($backAttachments);
+                $identification->attachAttachments($validated['license_back_image_id']);
+            }
         });
 
         $identification->refresh();
@@ -137,14 +148,8 @@ class IdentificationController extends Controller
         return response()->json([
             'identification' => new IdentificationResource($identification),
             'address' => $address ? new AddressResource($address) : null,
+            'license_front_image_id' => $identification->attachments()->where('metadata', 'license_front')->pluck('id'),
+            'license_back_image_id' => $identification->attachments()->where('metadata', 'license_back')->pluck('id'),
         ]);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Identification $identification)
-    {
-        //
     }
 }

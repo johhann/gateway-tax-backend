@@ -4,47 +4,52 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreBusinessRequest;
 use App\Http\Requests\UpdateBusinessRequest;
+use App\Http\Resources\BusinessResource;
 use App\Models\Business;
 
 class BusinessController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(StoreBusinessRequest $request)
     {
-        //
+        $data = $request->validated();
+        $business = Business::query()->updateOrCreate(
+            ['profile_id' => auth()->user()->profile->id],
+            $data
+        );
+
+        return (new BusinessResource($business))->response()->setStatusCode(201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Business $business)
+    public function show()
     {
-        //
+        $business = Business::where('profile_id', auth()->user()->profile->id)->first();
+
+        if (! $business) {
+            return response()->json(['message' => 'Business not found'], 404);
+        }
+
+        return new BusinessResource($business);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateBusinessRequest $request, Business $business)
+    public function update(UpdateBusinessRequest $request)
     {
-        //
-    }
+        $business = Business::where('profile_id', auth()->user()->profile->id)->first();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Business $business)
-    {
-        //
+        if (! $business) {
+            return response()->json(['message' => 'Business not found'], 404);
+        }
+
+        $business->update($request->validated())->refresh();
+
+        return new BusinessResource($business);
     }
 }

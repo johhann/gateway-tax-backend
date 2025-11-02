@@ -30,7 +30,9 @@ class StoreProfileRequest extends FormRequest
             'date_of_birth' => 'required|date',
             'phone' => 'required|string|unique:users,phone',
             'zip_code' => 'required|numeric|string',
-            //            "taxes_last_year" => ["required", Rule::in("Gateway Tax Service", "Jackson Hewitt", "H&R Block", "Liberty", "Turbo", "Other")],
+            'tax_station_id' => ['required', Rule::exists('tax_stations', 'id')->where(function ($query) {
+                $query->where('status', true);
+            })],
             'hear_from' => ['required', Rule::in(InformationSource::values())],
             'occupation' => 'required|string',
             'self_employment_income' => 'required|boolean',

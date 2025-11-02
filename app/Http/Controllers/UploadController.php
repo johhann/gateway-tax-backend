@@ -9,6 +9,36 @@ use Throwable;
 
 class UploadController extends Controller
 {
+    public function show(Attachment $attachment)
+    {
+        if ($attachment->user_id !== Auth()->id()) {
+            return response()->json([
+                'message' => 'Unauthorized',
+                'error' => 'You do not have permission to view this attachment.',
+            ], 403);
+        }
+
+        $media = $attachment->getFirstMedia(
+            $attachment->collectionName
+        );
+        if (! $media) {
+            return response()->json([
+                'message' => 'No media found for this attachment.',
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Attachment retrieved successfully.',
+            'data' => [
+                'id' => $attachment->id,
+                'file_name' => $media->file_name,
+                'collection_name' => $$attachment->collectionName,
+                'url' => $media->getFullUrl(),
+                'metadata' => $attachment->metadata,
+            ],
+        ]);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -18,11 +48,14 @@ class UploadController extends Controller
     {
         $collectionName = $request->input('collection_name');
         $file = $request->file('file');
+        $metadata = $request->input('metadata');
 
         DB::beginTransaction();
         try {
             $attachment = new Attachment;
             $attachment->user_id = Auth()->id();
+            $attachment->metadata = $metadata;
+            $attachment->collectionName = $collectionName;
             $attachment->save();
             $media = $attachment->addMedia($file)
                 ->toMediaCollection($collectionName);
@@ -35,6 +68,7 @@ class UploadController extends Controller
                     'file_name' => $media->file_name,
                     'collection_name' => $collectionName,
                     'url' => $media->getFullUrl(),
+                    'metadata' => $attachment->metadata,
                 ],
             ], 201);
         } catch (Throwable $e) {

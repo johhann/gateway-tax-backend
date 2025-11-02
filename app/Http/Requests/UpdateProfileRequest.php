@@ -30,7 +30,9 @@ class UpdateProfileRequest extends FormRequest
             'date_of_birth' => 'sometimes|date',
             'phone' => 'sometimes|string',
             'zip' => 'sometimes|string',
-            //            "taxes_last_year" => ["sometimes", Rule::in("Gateway Tax Service", "Jackson Hewitt", "H&R Block", "Liberty", "Turbo", "Other")],
+            'tax_station_id' => ['sometimes', Rule::exists('tax_stations', 'id')->where(function ($query) {
+                $query->where('status', true);
+            })],
             'hear_from' => ['sometimes', Rule::in(InformationSource::values())],
             'occupation' => 'sometimes|string',
             'self_employment_income' => 'sometimes|boolean',

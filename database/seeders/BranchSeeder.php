@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Branch;
-use App\Models\LegalCity;
+use App\Models\LegalLocation;
 use Illuminate\Database\Seeder;
 
 class BranchSeeder extends Seeder
@@ -13,12 +13,12 @@ class BranchSeeder extends Seeder
      */
     public function run(): void
     {
-        $legalCities = LegalCity::all();
+        $legalLocations = LegalLocation::all();
 
-        foreach ($legalCities as $legalCity) {
+        foreach ($legalLocations as $legalLocation) {
             Branch::create([
                 'name' => fake()->city(),
-                'legal_location_id' => $legalCity->id,
+                'legal_location_id' => $legalLocation->id,
             ]);
         }
     }
