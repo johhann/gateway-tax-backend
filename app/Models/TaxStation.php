@@ -12,6 +12,13 @@ class TaxStation extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected function casts(): array
+    {
+        return [
+            'status' => 'boolean',
+        ];
+    }
+
     public function profiles(): HasMany
     {
         return $this->hasMany(Profile::class);

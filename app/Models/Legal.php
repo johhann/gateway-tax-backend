@@ -15,7 +15,7 @@ class Legal extends Model
     use SoftDeletes;
 
     protected $casts = [
-        'spouse_information' => 'array',
+        'spouse_information' => 'json',
     ];
 
     public function profile(): BelongsTo
@@ -26,5 +26,10 @@ class Legal extends Model
     public function city(): BelongsTo
     {
         return $this->belongsTo(LegalCity::class, 'legal_city_id');
+    }
+
+    public function location(): BelongsTo
+    {
+        return $this->belongsTo(LegalLocation::class, 'legal_location_id');
     }
 }

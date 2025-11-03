@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('legal_locations', function (Blueprint $table) {
+        Schema::create('attachments', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('legal_city_id')->constrained()->cascadeOnDelete();
-            $table->string('title');
-
+            $table->nullableMorphs('record');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('metadata')->nullable();
+            $table->string('collection_name')->index();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('legal_locations');
+        Schema::dropIfExists('attachments');
     }
 };

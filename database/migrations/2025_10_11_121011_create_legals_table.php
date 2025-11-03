@@ -16,10 +16,10 @@ return new class extends Migration
 
             $table->foreignId('profile_id')->constrained()->cascadeOnDelete();
             $table->foreignId('legal_city_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('legal_location_id')->constrained()->cascadeOnDelete();
             $table->string('social_security_number');
-            $table->string('address');
             $table->string('filing_status');
-            $table->integer('number_of_dependant');
+            $table->integer('number_of_dependant')->default(0);
             $table->jsonb('spouse_information')->nullable();
 
             $table->timestamps();

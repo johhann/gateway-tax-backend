@@ -18,4 +18,9 @@ class Dependant extends Model
     {
         return $this->belongsTo(Legal::class);
     }
+
+    public function profile(): BelongsTo
+    {
+        return $this->belongsTo(Profile::class);
+    }
 }

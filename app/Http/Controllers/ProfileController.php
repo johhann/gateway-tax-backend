@@ -4,47 +4,54 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProfileRequest;
 use App\Http\Requests\UpdateProfileRequest;
+use App\Http\Resources\ProfileResource;
 use App\Models\Profile;
+use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreProfileRequest $request)
     {
-        //
+        $data = $request->validated();
+        $data['user_id'] = Auth::id();
+
+        $profile = Profile::create($data);
+
+        return (new ProfileResource($profile))->response()->setStatusCode(201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Profile $profile)
+    public function show()
     {
-        //
+        $profile = Profile::where('user_id', Auth::id())
+            ->first();
+
+        if (! $profile) {
+            return response()->json(['message' => 'Profile not found'], 404);
+        }
+
+        return new ProfileResource($profile);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProfileRequest $request, Profile $profile)
+    public function update(UpdateProfileRequest $request)
     {
-        //
-    }
+        $profile = Profile::where('user_id', Auth::id())
+            ->first();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Profile $profile)
-    {
-        //
+        if (! $profile) {
+            return response()->json(['message' => 'Profile not found'], 404);
+        }
+
+        $profile->update($request->validated());
+
+        return new ProfileResource($profile);
     }
 }

@@ -157,7 +157,7 @@ class ProfileInfolist
 
                         Tab::make('Dependant')
 
-                            ->badge(fn (Profile $record): ?string => $record->dependant()->count())
+                            ->badge(fn (Profile $record): ?string => $record->dependants()->count())
                             ->schema([
                                 RepeatableEntry::make('dependant')
                                     ->schema([

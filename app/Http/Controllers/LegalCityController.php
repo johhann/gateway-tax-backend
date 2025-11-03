@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreLegalCityRequest;
 use App\Http\Requests\UpdateLegalCityRequest;
+use App\Http\Resources\LegalCityResource;
 use App\Models\LegalCity;
 
 class LegalCityController extends Controller
@@ -11,9 +12,9 @@ class LegalCityController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function __invoke()
     {
-        //
+        return LegalCityResource::collection(LegalCity::all());
     }
 
     /**

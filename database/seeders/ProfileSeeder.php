@@ -100,7 +100,7 @@ class ProfileSeeder extends Seeder
 
             // dependant
             for ($i = 0; $i < $dependant; $i++) {
-                $profile->dependant()->create([
+                $profile->dependants()->create([
                     'first_name' => fake()->firstName(),
                     'middle_name' => fake()->optional()->firstName(),
                     'last_name' => fake()->lastName(),

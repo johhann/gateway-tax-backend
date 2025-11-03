@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreLegalLocationRequest;
-use App\Http\Requests\UpdateLegalLocationRequest;
+use App\Http\Resources\LegalLocationResource;
 use App\Models\LegalLocation;
 
 class LegalLocationController extends Controller
@@ -11,40 +10,10 @@ class LegalLocationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function __invoke(int $legalCityId)
     {
-        //
-    }
+        $legalLocation = LegalLocation::query()->where('legal_city_id', $legalCityId)->get();
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreLegalLocationRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(LegalLocation $legalLocation)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateLegalLocationRequest $request, LegalLocation $legalLocation)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(LegalLocation $legalLocation)
-    {
-        //
+        return LegalLocationResource::collection($legalLocation);
     }
 }

@@ -11,7 +11,7 @@ class UpdateBusinessRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return Auth()->check();
     }
 
     /**
@@ -21,8 +21,18 @@ class UpdateBusinessRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            //
-        ];
+        $validationRules = (new StoreBusinessRequest)->rules();
+
+        foreach ($validationRules as $field => $rules) {
+            if (is_array($rules)) {
+                $validationRules[$field] = array_filter($rules, function ($rule) {
+                    return $rule !== 'required' && $rule !== 'required_if';
+                });
+            } else {
+                $validationRules[$field] = str_replace('required', 'sometimes', $rules);
+            }
+        }
+
+        return $validationRules;
     }
 }
