@@ -159,7 +159,7 @@ class ProfileInfolist
 
                             ->badge(fn (Profile $record): ?string => $record->dependants()->count())
                             ->schema([
-                                RepeatableEntry::make('dependant')
+                                RepeatableEntry::make('dependants')
                                     ->schema([
                                         TextEntry::make('dependant.first_name')
                                             ->state(fn ($record) => $record->first_name),

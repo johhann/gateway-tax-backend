@@ -10,6 +10,7 @@ use App\Http\Controllers\IdentificationController;
 use App\Http\Controllers\LegalCityController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\LegalLocationController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SummaryController;
@@ -91,4 +92,15 @@ Route::prefix('v1')->group(function () {
         Route::get('tax-stations', [TaxStationController::class, '__invoke']);
         Route::get('summary', [SummaryController::class, '__invoke']);
     });
+
+    /**
+     * Notifications
+     */
+    Route::middleware(['auth:sanctum', 'ability:access-token'])
+        ->group(function () {
+            Route::get('notifications', [NotificationController::class, 'index']);
+            Route::get('notifications-unread-counter', [NotificationController::class, 'counter']);
+            Route::get('notifications-mark-all-read', [NotificationController::class, 'markAllRead']);
+            Route::get('notifications/{notification}/mark-as-read', [NotificationController::class, 'markAsRead']);
+        });
 });
