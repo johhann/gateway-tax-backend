@@ -29,7 +29,6 @@ class ResetPasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'old_password' => '',
             'new_password' => [
                 'required',
                 'string',

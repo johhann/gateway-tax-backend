@@ -30,7 +30,8 @@ Route::prefix('v1')->group(function () {
             Route::post('register', [RegisterController::class, 'store'])->name('users.register');
 
             Route::post('forgot-password', [ForgetPasswordController::class, 'initiate']);
-            Route::post('forgot-password/reset', [ForgetPasswordController::class, 'handle']);
+            Route::post('forgot-password/reset', [ForgetPasswordController::class, 'handle'])
+                ->middleware(['auth:sanctum', 'ability:access-token']);
 
             // Social Login
             Route::get('get-socialite-token', [SocialiteController::class, 'getSocialiteToken'])->name('users.device');
