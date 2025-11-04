@@ -37,12 +37,4 @@ class RegisterController extends Controller
             'token' => UserTokenService::getVerificationToken($user),
         ];
     }
-
-    private function getRole($role)
-    {
-        return match ($role) {
-            'user' => UserRole::USER->value,
-            default => UserRole::USER->value,
-        };
-    }
 }

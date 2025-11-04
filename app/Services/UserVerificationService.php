@@ -24,16 +24,18 @@ final class UserVerificationService
         return true;
     }
 
-    public static function verify(Request $request)
+    public static function verify(Request $request, $userId = null)
     {
         $request->validate([
             'code' => 'required|numeric|digits:4',
         ]);
 
-        $verificationCode = Cache::get('verify_'.Auth::id());
+        $verificationCode = Cache::get('verify_'.$userId ?? Auth::id());
 
         abort_if(! $verificationCode, 403, 'Sorry, your verification code has expired. Please try again.');
         abort_if($verificationCode != $request->code, 403, 'Incorrect verification code. Please try again.');
+
+        Cache::forget('verify_'.$userId ?? Auth::id());
 
         return true;
     }
