@@ -27,7 +27,8 @@ class UserFactory extends Factory
         $branches = Branch::pluck('id');
 
         return [
-            'name' => fake()->name(),
+            'first_name' => fake()->firstName(),
+            'last_name' => fake()->lastName(),
             'phone' => fake()->phoneNumber(),
             'email' => fake()->unique()->userName().'@gateway.com',
             'email_verified_at' => now(),

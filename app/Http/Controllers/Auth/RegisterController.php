@@ -23,7 +23,8 @@ class RegisterController extends Controller
         $user = User::updateOrCreate([
             'email' => $request->email,
         ], values: [
-            'name' => $request->name,
+            'first_name' => $request->name,
+            'last_name' => $request->name,
             'phone' => $request->phone,
             'role' => UserRole::USER,
             'password' => Hash::make($request->password),

@@ -31,6 +31,8 @@ class User extends Authenticatable
         'role' => UserRole::class,
     ];
 
+    protected $appends = ['name'];
+
     public function branch()
     {
         return $this->belongsTo(Branch::class);
@@ -70,5 +72,10 @@ class User extends Authenticatable
     public function isUser(): bool
     {
         return $this->role === UserRole::USER;
+    }
+
+    public function getNameAttribute(): string
+    {
+        return $this->first_name.' '.$this->last_name;
     }
 }
