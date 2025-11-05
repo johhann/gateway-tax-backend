@@ -15,7 +15,9 @@ class UserForm
     {
         return $schema
             ->components([
-                TextInput::make('name')
+                TextInput::make('first_name')
+                    ->required(),
+                TextInput::make('last_name')
                     ->required(),
                 TextInput::make('phone')
                     ->tel(),

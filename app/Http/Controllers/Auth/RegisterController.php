@@ -23,12 +23,18 @@ class RegisterController extends Controller
         $user = User::updateOrCreate([
             'email' => $request->email,
         ], values: [
-            'name' => $request->name,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
             'phone' => $request->phone,
             'role' => UserRole::USER,
             'password' => Hash::make($request->password),
             'status' => true,
         ]);
+
+        // save avatar
+        if ($request->hasFile('avatar')) {
+            $user->addMediaFromRequest('avatar')->toMediaCollection('user-avatar');
+        }
 
         UserVerificationService::send($user);
 

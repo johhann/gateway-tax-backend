@@ -5,16 +5,25 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Enums\UserRole;
+use App\Traits\MediaTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class User extends Authenticatable
+class User extends Authenticatable implements HasMedia
 {
     use HasApiTokens, HasFactory, Notifiable;
+    use InteractsWithMedia;
+    use MediaTrait;
     use SoftDeletes;
+
+    protected $with = ['media'];
+
+    protected $appends = ['name', 'attachment'];
 
     protected $hidden = [
         'password',
@@ -30,6 +39,13 @@ class User extends Authenticatable
         'status' => 'boolean',
         'role' => UserRole::class,
     ];
+
+    public function registerMediaCollections(): void
+    {
+        $this
+            ->addMediaCollection('user-avatar')
+            ->singleFile();
+    }
 
     public function branch()
     {
@@ -70,5 +86,10 @@ class User extends Authenticatable
     public function isUser(): bool
     {
         return $this->role === UserRole::USER;
+    }
+
+    public function getNameAttribute(): string
+    {
+        return $this->first_name.' '.$this->last_name;
     }
 }

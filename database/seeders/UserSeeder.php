@@ -15,14 +15,16 @@ class UserSeeder extends Seeder
     {
 
         User::factory()->create([
-            'name' => 'Gateway Admin',
+            'first_name' => fake()->firstName(),
+            'last_name' => fake()->lastName(),
             'email' => 'admin@gateway.com',
             'role' => UserRole::ADMIN,
             'password' => bcrypt('password'),
         ]);
 
         User::factory()->create([
-            'name' => 'Gateway Admin',
+            'first_name' => fake()->firstName(),
+            'last_name' => fake()->lastName(),
             'email' => 'operation@gateway.com',
             'role' => UserRole::OPERATION,
             'password' => bcrypt('password'),

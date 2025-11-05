@@ -22,7 +22,9 @@ class UsersTable
         return $table
             ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('role', [UserRole::ACCOUNTANT, UserRole::BRANCH_MANAGER]))
             ->columns([
-                TextColumn::make('name')
+                TextColumn::make('first_name')
+                    ->searchable(),
+                TextColumn::make('last_name')
                     ->searchable(),
                 TextColumn::make('phone')
                     ->searchable(),

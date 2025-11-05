@@ -12,7 +12,8 @@ class UserInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('name'),
+                TextEntry::make('first_name'),
+                TextEntry::make('last_name'),
                 TextEntry::make('phone')
                     ->placeholder('-'),
                 TextEntry::make('email')
@@ -22,7 +23,9 @@ class UserInfolist
                 IconEntry::make('status')
                     ->boolean(),
                 TextEntry::make('branch.name')
-                    ->numeric()
+                    ->label('Branch')
+                    ->color('primary')
+                    ->url(fn ($record) => "/branches/{$record->branch_id}")
                     ->placeholder('-'),
                 TextEntry::make('created_at')
                     ->dateTime()
