@@ -111,82 +111,76 @@ class ProfileInfolist
                     ])
                     ->columns(4)
                     ->columnSpanFull(),
-                Tabs::make('Tabs')
-                    ->tabs([
-                        Tab::make('Legal')
-                            ->schema([
+                Fieldset::make('Legal')
+                    ->schema([
+                        Section::make([
+                            TextEntry::make('legal.city.name'),
+                            TextEntry::make('legal.social_security_number'),
+                            TextEntry::make('legal.address'),
+                            TextEntry::make('legal.filing_status'),
+                            TextEntry::make('legal.number_of_dependant'),
+                        ])
+                            ->columns(3)
+                            ->columnSpan(4),
+                        Section::make([
+                            KeyValueEntry::make('legal.spouse_information')
+                                ->label('Spouse Information')
+                                ->visible(fn ($record) => ! empty($record->legal['spouse_information']))
+                                ->state(function ($record) {
+                                    $spouse = $record->legal['spouse_information'] ?? null;
 
-                                Flex::make([
-                                    Section::make([
+                                    if (! $spouse) {
+                                        return null;
+                                    }
 
-                                        TextEntry::make('legal.city.name'),
-                                        TextEntry::make('legal.social_security_number'),
-                                        TextEntry::make('legal.address'),
-                                        TextEntry::make('legal.filing_status'),
-                                        TextEntry::make('legal.number_of_dependant'),
-                                    ])
-                                        ->columns(3)
-                                        ->columnSpan(4),
-                                    Section::make([
-                                        KeyValueEntry::make('legal.spouse_information')
-                                            ->label('Spouse Information')
-                                            ->visible(fn ($record) => ! empty($record->legal['spouse_information']))
-                                            ->state(function ($record) {
-                                                $spouse = $record->legal['spouse_information'] ?? null;
-
-                                                if (! $spouse) {
-                                                    return null;
-                                                }
-
-                                                return [
-                                                    'First Name' => $spouse['first_name'] ?? '-',
-                                                    'Middle Name' => $spouse['middle_name'] ?? '-',
-                                                    'Last Name' => $spouse['last_name'] ?? '-',
-                                                    'Date of Birth' => isset($spouse['date_of_birth']['date'])
-                                                        ? \Carbon\Carbon::parse($spouse['date_of_birth']['date'])->format('Y-m-d')
-                                                        : '-',
-                                                    'SSN' => $spouse['social_security_number'] ?? '-',
-                                                ];
-                                            }),
-                                    ])
-                                        ->columnSpan(2)
-                                        ->grow(false),
-                                ])
-                                    ->from('md'),
-                            ]),
-
-                        Tab::make('Dependant')
-
-                            ->badge(fn (Profile $record): ?string => $record->dependants()->count())
-                            ->schema([
-                                RepeatableEntry::make('dependants')
-                                    ->schema([
-                                        TextEntry::make('dependant.first_name')
-                                            ->state(fn ($record) => $record->first_name),
-                                        TextEntry::make('dependant.middle_name')
-                                            ->state(fn ($record) => $record->middle_name),
-                                        TextEntry::make('dependant.last_name')
-                                            ->state(fn ($record) => $record->last_name),
-                                        TextEntry::make('dependant.social_security_number')
-                                            ->state(fn ($record) => $record->social_security_number),
-                                        TextEntry::make('dependant.date_of_birth')
-                                            ->date()
-                                            ->state(fn ($record) => $record->date_of_birth),
-                                        TextEntry::make('dependant.occupation')
-                                            ->state(fn ($record) => $record->occupation),
-                                        TextEntry::make('dependant.relationship')
-                                            ->state(fn ($record) => $record->relationship),
-                                    ])
-                                    ->placeholder('Dependant')
-                                    ->columns(3)
-                                    ->columnSpan(6)
-                                    ->grid(2),
-                            ])
-                            ->columns(2)
-                            ->columnSpanFull(),
+                                    return [
+                                        'First Name' => $spouse['first_name'] ?? '-',
+                                        'Middle Name' => $spouse['middle_name'] ?? '-',
+                                        'Last Name' => $spouse['last_name'] ?? '-',
+                                        'Date of Birth' => isset($spouse['date_of_birth']['date'])
+                                            ? \Carbon\Carbon::parse($spouse['date_of_birth']['date'])->format('Y-m-d')
+                                            : '-',
+                                        'SSN' => $spouse['social_security_number'] ?? '-',
+                                    ];
+                                }),
+                        ])
+                            ->columnSpanFull()
+                            ->grow(false),
                     ])
-                    ->columnSpanFull()
-                    ->activeTab(1),
+                    ->columnSpanFull(),
+                RepeatableEntry::make('dependants')
+                    ->visible(fn (Profile $record) => $record->legal->number_of_dependant > 0)
+
+                    ->schema([
+                        TextEntry::make('dependant.first_name')
+                            ->state(fn ($record) => $record->first_name),
+                        TextEntry::make('dependant.middle_name')
+                            ->state(fn ($record) => $record->middle_name),
+                        TextEntry::make('dependant.last_name')
+                            ->state(fn ($record) => $record->last_name),
+                        TextEntry::make('dependant.social_security_number')
+                            ->state(fn ($record) => $record->social_security_number),
+                        TextEntry::make('dependant.date_of_birth')
+                            ->date()
+                            ->state(fn ($record) => $record->date_of_birth),
+                        TextEntry::make('dependant.relationship')
+                            ->state(fn ($record) => $record->relationship),
+                        TextEntry::make('dependant.occupation')
+                            ->state(fn ($record) => $record->occupation),
+                    ])
+                    ->columns(3)
+                    ->columnSpan(3)
+                    ->grow(false),
+
+                // Tabs::make('Tabs')
+                //     ->tabs([
+                //         Tab::make('Legal')
+                //             ->schema([
+
+                //             ]),
+                //     ])
+                //     ->columnSpanFull()
+                //     ->activeTab(1),
             ]);
     }
 }

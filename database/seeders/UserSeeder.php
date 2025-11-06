@@ -20,6 +20,7 @@ class UserSeeder extends Seeder
             'email' => 'admin@gateway.com',
             'role' => UserRole::ADMIN,
             'password' => bcrypt('password'),
+            'branch_id' => null,
         ]);
 
         User::factory()->create([
@@ -28,6 +29,32 @@ class UserSeeder extends Seeder
             'email' => 'operation@gateway.com',
             'role' => UserRole::OPERATION,
             'password' => bcrypt('password'),
+            'branch_id' => null,
+        ]);
+
+        User::factory()->create([
+            'first_name' => fake()->firstName(),
+            'last_name' => fake()->lastName(),
+            'email' => 'branch_manager@gateway.com',
+            'role' => UserRole::BRANCH_MANAGER,
+            'password' => bcrypt('password'),
+        ]);
+
+        User::factory()->create([
+            'first_name' => fake()->firstName(),
+            'last_name' => fake()->lastName(),
+            'email' => 'accountant@gateway.com',
+            'role' => UserRole::ACCOUNTANT,
+            'password' => bcrypt('password'),
+        ]);
+
+        User::factory()->create([
+            'first_name' => fake()->firstName(),
+            'last_name' => fake()->lastName(),
+            'email' => 'user@gateway.com',
+            'role' => UserRole::USER,
+            'password' => bcrypt('password'),
+            'branch_id' => null,
         ]);
 
         User::factory(10)->create(['role' => UserRole::BRANCH_MANAGER]);

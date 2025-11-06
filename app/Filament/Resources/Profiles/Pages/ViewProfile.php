@@ -14,6 +14,10 @@ class ViewProfile extends ViewRecord
     {
         return [
             EditAction::make(),
+            ProfileResource::assignBranchAction(),
+            ProfileResource::changeBranchAction(),
+            ProfileResource::assignAccountantAction(),
+            ProfileResource::changeAccountantAction(),
         ];
     }
 }

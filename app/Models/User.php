@@ -5,7 +5,9 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Enums\UserRole;
+use App\Models\Scopes\UserScope;
 use App\Traits\MediaTrait;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -14,6 +16,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
+// #[ScopedBy(UserScope::class)]
 class User extends Authenticatable implements HasMedia
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -91,5 +94,10 @@ class User extends Authenticatable implements HasMedia
     public function getNameAttribute(): string
     {
         return $this->first_name.' '.$this->last_name;
+    }
+
+    public function scopeAccountant($query)
+    {
+        return $query->where('role', UserRole::ACCOUNTANT);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Models\User;
@@ -17,6 +18,7 @@ class AuthController extends Controller
     {
         $user = User::query()
             ->where('email', $request->email)
+            ->where('role', UserRole::USER)
             ->first();
 
         $errorMessage = 'Unable to sign in. Check your email & password and try again.';

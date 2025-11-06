@@ -17,8 +17,6 @@ class ProfileScope implements Scope
     {
         $user = User::find(Auth::id());
 
-        // dd($user->isUser());
-
         if ($user->isBranchManager()) {
             $builder->where('assigned_branch_id', $user->branch_id);
         }
