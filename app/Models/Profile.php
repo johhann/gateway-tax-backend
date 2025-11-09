@@ -71,6 +71,11 @@ class Profile extends Model
         return $this->belongsTo(Branch::class, 'assigned_branch_id');
     }
 
+    public function taxRequests(): HasMany
+    {
+        return $this->hasMany(TaxRequest::class);
+    }
+
     public function assignedTo(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_user_id');

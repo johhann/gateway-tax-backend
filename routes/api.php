@@ -13,7 +13,9 @@ use App\Http\Controllers\LegalLocationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SummaryController;
+use App\Http\Controllers\TaxRequestController;
 use App\Http\Controllers\TaxStationController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\UserController;
@@ -92,6 +94,10 @@ Route::prefix('v1')->group(function () {
         Route::get('legal-locations/{legalCityId}', [LegalLocationController::class, '__invoke']);
         Route::get('tax-stations', [TaxStationController::class, '__invoke']);
         Route::get('summary', [SummaryController::class, '__invoke']);
+        Route::post('tax-request', [TaxRequestController::class, 'store']);
+        Route::get('schedule', [ScheduleController::class, 'show']);
+        Route::post('schedule', [ScheduleController::class, 'store']);
+        Route::put('schedule', [ScheduleController::class, 'update']);
     });
 
     /**
