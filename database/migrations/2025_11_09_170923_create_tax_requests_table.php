@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('full_name');
             $table->string('ssn')->unique();
             $table->text('specific_request')->nullable();
+            $table->string('status');
             $table->timestamps();
             $table->softDeletes();
         });

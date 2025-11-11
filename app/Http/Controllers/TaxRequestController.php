@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\TaxRequestStatus;
 use App\Http\Requests\StoreTaxRequestRequest;
 use App\Http\Requests\UpdateTaxRequestRequest;
 use App\Http\Resources\TaxStationResource;
@@ -23,7 +24,9 @@ class TaxRequestController extends Controller
     public function store(StoreTaxRequestRequest $request)
     {
         $profile = $request->user()->profile;
-        $taxRequest = new TaxRequest($request->validated());
+        $taxRequest = new TaxRequest(array_merge($request->validated(), [
+            'status' => TaxRequestStatus::Pending,
+        ]));
         $taxRequest->profile()->associate($profile);
         $taxRequest->save();
 
