@@ -22,8 +22,8 @@ class TaxRequest extends Model
         ];
     }
 
-    public function profile(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Profile::class);
+        return $this->belongsTo(User::class);
     }
 }

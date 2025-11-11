@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             TaxStationSeeder::class,
             UserSeeder::class,
             ProfileSeeder::class,
+            TaxRequestSeeder::class,
         ]);
 
         DB::commit();

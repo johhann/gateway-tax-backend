@@ -34,8 +34,16 @@ class ProfileInfolist
                                 TextEntry::make('phone'),
                                 TextEntry::make('date_of_birth')
                                     ->date(),
+                                TextEntry::make('identification.license_type'),
+                                TextEntry::make('identification.issuing_state'),
+                                TextEntry::make('identification.license_number'),
+                                TextEntry::make('identification.license_issue_date')
+                                    ->date(),
+                                TextEntry::make('identification.license_expiration_date')
+                                    ->date()
+                                    ->color(Color::Red),
                             ])
-                            ->columns(3)
+                            ->columns(4)
                             ->columnSpan(6),
                         Fieldset::make('Additional Information')
                             ->schema([
@@ -61,22 +69,9 @@ class ProfileInfolist
                             ])
                             ->columnSpan(3),
                     ])
-                        ->columns(3)
+                        ->columns()
                         ->grow(true)
                         ->columnSpan(4),
-                    Section::make([
-                        TextEntry::make('identification.license_type'),
-                        TextEntry::make('identification.issuing_state'),
-                        TextEntry::make('identification.license_number'),
-                        TextEntry::make('identification.license_issue_date')
-                            ->date(),
-                        TextEntry::make('identification.license_expiration_date')
-                            ->date()
-                            ->color(Color::Red),
-                    ])
-                        ->columns(1)
-                        ->grow(false)
-                        ->columnSpan(2),
                 ])
                     ->from('md')
                     ->columnSpanFull(),

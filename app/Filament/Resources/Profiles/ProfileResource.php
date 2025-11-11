@@ -93,7 +93,7 @@ class ProfileResource extends Resource
         return Action::make('Change Branch')
             ->visible(fn (Profile $record) => (auth()->user()->isOperation() || auth()->user()->isAdmin()) && $record->assigned_branch_id)
             ->slideOver()
-            ->color('warning')
+            ->color('success')
             ->icon('heroicon-o-cube-transparent')
             ->modalWidth('sm')
             ->schema(function (Profile $record) {

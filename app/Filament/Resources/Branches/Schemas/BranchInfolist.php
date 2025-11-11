@@ -12,7 +12,7 @@ class BranchInfolist
         return $schema
             ->components([
                 TextEntry::make('name'),
-                TextEntry::make('legalLocation.name'),
+                // TextEntry::make('legalLocation.name'),
             ]);
     }
 }

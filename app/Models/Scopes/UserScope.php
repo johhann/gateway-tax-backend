@@ -2,37 +2,59 @@
 
 namespace App\Models\Scopes;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 
 class UserScope implements Scope
 {
-    /**
-     * Apply the scope to a given Eloquent query builder.
-     */
     public function apply(Builder $builder, Model $model): void
     {
-        if (! Auth::check()) {
+        // Avoid recursion: Skip during container authentication resolution
+        if ($this->isResolvingAuth()) {
             return;
         }
 
-        $user = User::withoutGlobalScopes()->find(Auth::id());
+        $authUser = $this->resolveAuthUser();
+        if (! $authUser) {
+            return;
+        }
+
+        $user = $model->newQueryWithoutScopes()->find($authUser->getKey());
+        if (! $user) {
+            return;
+        }
 
         if ($user->isAdmin() || $user->isOperation()) {
             return;
         }
 
-        $builder->where(function (Builder $query) use ($user) {
+        $builder->where(function ($q) use ($user) {
             if ($user->isBranchManager()) {
-                $query->where('branch_id', $user->branch_id);
+                $q->where('branch_id', $user->branch_id);
             }
 
-            if ($user->isUser() || $user->isAccountant()) {  // Combined for efficiency, assuming mutual exclusivity
-                $query->where('id', $user->id);
+            if ($user->isUser() || $user->isAccountant()) {
+                $q->where('id', $user->id);
             }
-        })->orWhere('id', $user->id);
+        });
+    }
+
+    private function isResolvingAuth(): bool
+    {
+        // Detect if we are inside Filament/Auth guards resolving user model
+        return App::runningInConsole()
+            || str_contains(debug_backtrace()[1]['class'] ?? '', 'AuthManager')
+            || request()->routeIs('filament.*') && ! Auth::check();
+    }
+
+    private function resolveAuthUser()
+    {
+        return Auth::guard('filament')->user()
+            ?? Auth::guard('web')->user()
+            ?? Auth::guard('sanctum')->user()
+            ?? Auth::user();
     }
 }

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tax_requests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('profile_id')->constrained();
+            $table->foreignId('user_id')->constrained();
             $table->year('tax_year');
             $table->string('full_name');
             $table->string('ssn')->unique();

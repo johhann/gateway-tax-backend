@@ -12,4 +12,16 @@ enum TaxRequestStatus: string
     case ReadyForPickup = 'ready_for_pickup';
     case Canceled = 'canceled';
     case Completed = 'completed';
+
+    public function color(): string
+    {
+        return match ($this) {
+            self::Pending => 'secondary',
+            self::Processing => 'warning',
+            self::Processed => 'success',
+            self::ReadyForPickup => 'info',
+            self::Canceled => 'danger',
+            self::Completed => 'success',
+        };
+    }
 }
