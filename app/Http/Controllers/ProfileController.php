@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ProfileUserStatus;
 use App\Http\Requests\StoreProfileRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Resources\ProfileResource;
@@ -17,6 +18,7 @@ class ProfileController extends Controller
     {
         $data = $request->validated();
         $data['user_id'] = Auth::id();
+        $data['user_status'] = ProfileUserStatus::DRAFT;
 
         $profile = Profile::create($data);
 

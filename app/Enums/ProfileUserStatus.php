@@ -4,6 +4,7 @@ namespace App\Enums;
 
 enum ProfileUserStatus: string
 {
+    case DRAFT = 'draft';
     case SUBMITTED = 'submitted';
     case PROCESSING = 'processing';
     case PROCESSED = 'processed';
