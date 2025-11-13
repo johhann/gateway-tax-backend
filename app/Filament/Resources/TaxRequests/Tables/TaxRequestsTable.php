@@ -23,11 +23,16 @@ class TaxRequestsTable
                 TextColumn::make('user.id')
                     ->state(fn ($record) => $record->user->name)
                     ->searchable(),
+                TextColumn::make('full_name')
+                    ->label('Requested Name')
+                    ->searchable(),
                 TextColumn::make('tax_year')
                     ->sortable(),
-                TextColumn::make('full_name')
-                    ->searchable(),
                 TextColumn::make('ssn')
+                    ->label('SSN')
+                    ->searchable(),
+                TextColumn::make('assignedTo.name')
+                    ->placeholder('Unassigned')
                     ->searchable(),
                 TextColumn::make('status')
                     ->badge()
@@ -38,18 +43,18 @@ class TaxRequestsTable
                     ->sortable(),
             ])
             ->filters([
-                TrashedFilter::make(),
+                // TrashedFilter::make(),
             ])
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
-                ]),
+                // BulkActionGroup::make([
+                //     DeleteBulkAction::make(),
+                //     ForceDeleteBulkAction::make(),
+                //     RestoreBulkAction::make(),
+                // ]),
             ]);
     }
 }

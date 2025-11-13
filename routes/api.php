@@ -89,7 +89,7 @@ Route::prefix('v1')->group(function () {
         Route::post('upload', [UploadController::class, 'store']);
         Route::delete('upload/{attachment}', [UploadController::class, 'destroy']);
         Route::get('/image/{attachment}', [UploadController::class, 'show']);
-        Route::get('legal-cities', [LegalCityController::class, '__invoke']);
+        Route::get('cities', [LegalCityController::class, '__invoke']);
         Route::get('tax-stations', [TaxStationController::class, '__invoke']);
         Route::get('summary', [SummaryController::class, '__invoke']);
         Route::post('tax-request', [TaxRequestController::class, 'store']);

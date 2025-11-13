@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Branches\Tables;
 
+use App\Models\LegalCity;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -10,6 +11,7 @@ use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
@@ -19,14 +21,24 @@ class BranchesTable
     {
         return $table
             ->columns([
+                TextColumn::make('id')
+                    ->searchable(),
                 TextColumn::make('name')
                     ->searchable(),
-                // TextColumn::make('legalLocation.name')
-                //     ->numeric()
-                //     ->sortable(),
+                TextColumn::make('legalCity.name')
+                    ->sortable(),
+                TextColumn::make('profiles_count')
+                    ->label('Profiles')
+                    ->counts('profiles')
+                    ->sortable(),
             ])
             ->filters([
                 // TrashedFilter::make(),
+                SelectFilter::make('legal_city_id')
+                    ->relationship('legalCity', 'name')
+                    ->label('Legal City')
+                    ->multiple(),
+                // ->options(LegalCity::pluck('name', 'id')),
             ])
             ->recordActions([
                 ViewAction::make(),

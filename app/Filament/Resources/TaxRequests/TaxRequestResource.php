@@ -24,7 +24,7 @@ class TaxRequestResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static ?string $recordTitleAttribute = 'user_id';
+    protected static ?string $recordTitleAttribute = 'full_name';
 
     public static function getNavigationBadge(): ?string
     {

@@ -33,7 +33,7 @@ class ProfileResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Identification;
 
-    protected static ?string $recordTitleAttribute = 'first_name';
+    protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 

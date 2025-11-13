@@ -17,8 +17,8 @@ class UsersRelationManager extends RelationManager
 
     public static function getTabComponent(Model $ownerRecord, string $pageClass): Tab
     {
-        return Tab::make('Inside Users')
-            ->badge($ownerRecord->profiles()->count())
+        return Tab::make('Employees')
+            ->badge($ownerRecord->users()->count())
             ->badgeColor('info')
             ->badgeTooltip('The number of posts in this category')
             ->icon('heroicon-o-users');

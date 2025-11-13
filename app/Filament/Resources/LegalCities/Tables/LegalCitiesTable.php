@@ -19,9 +19,9 @@ class LegalCitiesTable
             ->columns([
                 TextColumn::make('name')
                     ->searchable(),
-                TextColumn::make('locations_count')
-                    ->label('Locations')
-                    ->counts('locations'),
+                TextColumn::make('branches_count')
+                    ->label('Branches')
+                    ->counts('branches'),
             ])
             ->filters([
                 TrashedFilter::make(),

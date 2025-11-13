@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('tax_requests', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
+            $table->foreignId('assigned_user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->year('tax_year');
             $table->string('full_name');
             $table->string('ssn')->unique();

@@ -26,13 +26,13 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class LocationsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'locations';
+    protected static string $relationship = 'branches';
 
     public function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                TextInput::make('value')
+                TextInput::make('id')
                     ->required(),
                 TextInput::make('name')
                     ->required(),
@@ -43,7 +43,7 @@ class LocationsRelationManager extends RelationManager
     {
         return $schema
             ->components([
-                TextEntry::make('value'),
+                TextEntry::make('id'),
                 TextEntry::make('name'),
             ]);
     }
@@ -51,28 +51,28 @@ class LocationsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('value')
+            ->recordTitleAttribute('id')
             ->columns([
-                TextColumn::make('value')
+                TextColumn::make('id')
                     ->searchable(),
                 TextColumn::make('name')
                     ->searchable(),
             ])
             ->filters([
-                TrashedFilter::make(),
+                // TrashedFilter::make(),
             ])
             ->headerActions([
                 CreateAction::make(),
                 AssociateAction::make(),
             ])
             ->recordActions([
-                EditAction::make(),
+                // EditAction::make(),
                 // DissociateAction::make()
                 //     ->label('Remove'),
                 DeleteAction::make()
                     ->iconButton(),
-                ForceDeleteAction::make(),
-                RestoreAction::make(),
+                // ForceDeleteAction::make(),
+                // RestoreAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
