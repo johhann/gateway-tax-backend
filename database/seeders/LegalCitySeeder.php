@@ -89,9 +89,9 @@ class LegalCitySeeder extends Seeder
 
             if (isset($city['locations'])) {
                 foreach ($city['locations'] as $key => $location) {
-                    $newCity->locations()->create([
+                    $newCity->branches()->create([
                         'id' => $key,
-                        'title' => $location,
+                        'name' => $location,
                     ]);
                 }
             }

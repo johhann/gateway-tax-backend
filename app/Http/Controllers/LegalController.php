@@ -33,7 +33,7 @@ class LegalController extends Controller
             }
         });
 
-        return (new LegalResource($legal->load(['city', 'location', 'profile.dependants'])))->response()->setStatusCode(201);
+        return (new LegalResource($legal->load(['city', 'branch', 'profile.dependants'])))->response()->setStatusCode(201);
 
     }
 

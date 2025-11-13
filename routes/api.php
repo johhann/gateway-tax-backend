@@ -9,7 +9,6 @@ use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\IdentificationController;
 use App\Http\Controllers\LegalCityController;
 use App\Http\Controllers\LegalController;
-use App\Http\Controllers\LegalLocationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
@@ -91,7 +90,6 @@ Route::prefix('v1')->group(function () {
         Route::delete('upload/{attachment}', [UploadController::class, 'destroy']);
         Route::get('/image/{attachment}', [UploadController::class, 'show']);
         Route::get('legal-cities', [LegalCityController::class, '__invoke']);
-        Route::get('legal-locations/{legalCityId}', [LegalLocationController::class, '__invoke']);
         Route::get('tax-stations', [TaxStationController::class, '__invoke']);
         Route::get('summary', [SummaryController::class, '__invoke']);
         Route::post('tax-request', [TaxRequestController::class, 'store']);

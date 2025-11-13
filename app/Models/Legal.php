@@ -28,8 +28,8 @@ class Legal extends Model
         return $this->belongsTo(LegalCity::class, 'legal_city_id');
     }
 
-    public function location(): BelongsTo
+    public function branch(): BelongsTo
     {
-        return $this->belongsTo(LegalLocation::class, 'legal_location_id');
+        return $this->belongsTo(Branch::class, 'branch_id');
     }
 }

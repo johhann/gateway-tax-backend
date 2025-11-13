@@ -13,6 +13,6 @@ class SummaryController extends Controller
      */
     public function __invoke(Request $request)
     {
-        return new SummaryResource(Profile::query()->where('id', auth()->user()->profile->id)->with(['legal', 'legal.location', 'dependants', 'payment', 'taxStation', 'identification', 'address'])->firstOrFail());
+        return new SummaryResource(Profile::query()->where('id', auth()->user()->profile->id)->with(['legal', 'legal.branch', 'dependants', 'payment', 'taxStation', 'identification', 'address'])->firstOrFail());
     }
 }

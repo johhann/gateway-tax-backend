@@ -15,10 +15,16 @@ return new class extends Migration
             $table->id();
 
             $table->string('name');
-            $table->foreignId('legal_location_id')->constrained();
+            $table->foreignId('legal_city_id')->constrained();
 
             $table->timestamps();
             $table->softDeletes();
+        });
+
+        Schema::table('legals', function (Blueprint $table) {
+            $table->dropForeign(['legal_location_id']);
+            $table->dropColumn('legal_location_id');
+            $table->foreignId('branch_id')->constrained()->cascadeOnDelete();
         });
     }
 
@@ -27,6 +33,11 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('legals', function (Blueprint $table) {
+            $table->dropForeign(['branch_id']);
+            $table->dropColumn('branch_id');
+            $table->foreignId('legal_location_id')->constrained()->cascadeOnDelete();
+        });
         Schema::dropIfExists('branches');
     }
 };

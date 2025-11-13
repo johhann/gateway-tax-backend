@@ -23,8 +23,8 @@ class Branch extends Model
         return $this->hasMany(Profile::class, 'assigned_branch_id');
     }
 
-    public function legalLocation(): BelongsTo
+    public function legalCity(): BelongsTo
     {
-        return $this->belongsTo(LegalLocation::class);
+        return $this->belongsTo(LegalCity::class);
     }
 }

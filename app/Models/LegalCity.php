@@ -21,8 +21,8 @@ class LegalCity extends Model
         return $this->hasMany(Legal::class);
     }
 
-    public function locations(): HasMany
+    public function branches(): HasMany
     {
-        return $this->hasMany(LegalLocation::class);
+        return $this->hasMany(Branch::class);
     }
 }

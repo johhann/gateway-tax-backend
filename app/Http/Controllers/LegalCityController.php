@@ -14,7 +14,7 @@ class LegalCityController extends Controller
      */
     public function __invoke()
     {
-        return LegalCityResource::collection(LegalCity::all());
+        return LegalCityResource::collection(LegalCity::all()->load('branches'));
     }
 
     /**
