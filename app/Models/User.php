@@ -55,13 +55,17 @@ class User extends Authenticatable implements HasMedia
         return $this->belongsTo(Branch::class);
     }
 
-    public function profile()
+    public function profiles()
     {
         return $this->hasMany(Profile::class, 'user_id');
     }
 
-    // assigned to
-    public function assignedTo()
+    public function assignedProfiles()
+    {
+        return $this->hasMany(Profile::class, 'assigned_user_id');
+    }
+
+    public function assignedTaxRequests()
     {
         return $this->hasMany(Profile::class, 'assigned_user_id');
     }

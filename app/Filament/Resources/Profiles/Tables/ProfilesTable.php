@@ -45,6 +45,7 @@ class ProfilesTable
                 TextColumn::make('branch.name')
                     ->placeholder('-')
                     ->hidden(auth()->user()->isAccountant() || auth()->user()->isBranchManager())
+                    ->limit(20)
                     ->searchable(),
                 TextColumn::make('assignedTo.name')
                     ->placeholder('-')
