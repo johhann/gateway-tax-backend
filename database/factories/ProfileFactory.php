@@ -43,6 +43,7 @@ class ProfileFactory extends Factory
             'self_employment_income' => $this->faker->boolean(60), // 30% chance of true
             'progress_status' => $this->faker->randomElement(ProfileProgressStatus::getValues()),
             'user_status' => $this->faker->randomElement(ProfileUserStatus::getValues()),
+            'ssn' => $this->faker->numerify('#########'),
         ];
     }
 }

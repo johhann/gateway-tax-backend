@@ -25,7 +25,6 @@ class StoreAddressRequest extends FormRequest
         return [
             'address' => 'required|string',
             'apt' => 'nullable|string',
-            'zip_code' => 'required|string',
             'city' => 'required|string',
             'state' => ['required', 'string', new StateValidation],
         ];

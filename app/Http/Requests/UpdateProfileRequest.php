@@ -2,9 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\InformationSource;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class UpdateProfileRequest extends FormRequest
 {
@@ -23,19 +21,18 @@ class UpdateProfileRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'first_name' => 'sometimes|string|max:255',
-            'middle_name' => 'sometimes|nullable|string|max:255',
-            'last_name' => 'sometimes|string|max:255',
-            'date_of_birth' => 'sometimes|date',
-            'phone' => 'sometimes|string',
-            'zip' => 'sometimes|string',
-            'tax_station_id' => ['sometimes', Rule::exists('tax_stations', 'id')->where(function ($query) {
-                $query->where('status', true);
-            })],
-            'hear_from' => ['sometimes', Rule::in(InformationSource::values())],
-            'occupation' => 'sometimes|string',
-            'self_employment_income' => 'sometimes|boolean',
-        ];
+        $validationRules = (new StoreProfileRequest)->rules();
+
+        foreach ($validationRules as $field => $rules) {
+            if (is_array($rules)) {
+                $validationRules[$field] = array_filter($rules, function ($rule) {
+                    return $rule !== 'required' && $rule !== 'required_if';
+                });
+            } else {
+                $validationRules[$field] = str_replace('required', 'sometimes', $rules);
+            }
+        }
+
+        return $validationRules;
     }
 }

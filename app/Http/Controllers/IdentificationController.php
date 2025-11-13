@@ -50,7 +50,7 @@ class IdentificationController extends Controller
                 'apt' => $validated['apt'] ?? null,
                 'city' => $validated['city'],
                 'state' => $validated['state'],
-                'zip_code' => $validated['zip_code'],
+                'zip_code' => $profile->zip_code,
             ]);
         });
 
@@ -114,13 +114,14 @@ class IdentificationController extends Controller
             }
 
             $addrData = [];
-            foreach (['address', 'apt', 'city', 'state', 'zip_code'] as $key) {
+            foreach (['address', 'apt', 'city', 'state'] as $key) {
                 if (array_key_exists($key, $validated)) {
                     $addrData[$key] = $validated[$key];
                 }
             }
 
             if (! empty($addrData)) {
+                $addrData['zip_code'] = $profile->zip_code;
                 if ($address) {
                     $address->update($addrData);
                 } else {

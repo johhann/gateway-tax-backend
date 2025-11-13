@@ -24,6 +24,7 @@ class Profile extends Model
     protected $casts = [
         'publish_status' => ProfileProgressStatus::class,
         'user_status' => ProfileUserStatus::class,
+        'date_of_birth' => 'datetime',
     ];
 
     public function address(): HasOne
