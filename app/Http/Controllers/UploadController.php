@@ -19,7 +19,7 @@ class UploadController extends Controller
         }
 
         $media = $attachment->getFirstMedia(
-            $attachment->collectionName
+            $attachment->collection_name
         );
         if (! $media) {
             return response()->json([
@@ -32,7 +32,7 @@ class UploadController extends Controller
             'data' => [
                 'id' => $attachment->id,
                 'file_name' => $media->file_name,
-                'collection_name' => $$attachment->collectionName,
+                'collection_name' => $attachment->collection_name,
                 'url' => $media->getFullUrl(),
                 'metadata' => $attachment->metadata,
             ],
@@ -46,16 +46,17 @@ class UploadController extends Controller
      */
     public function store(StoreAttachmentRequest $request)
     {
-        $collectionName = $request->input('collection_name');
+        $data = $request->validated();
+        $collectionName = $data['collection_name'];
         $file = $request->file('file');
-        $metadata = $request->input('metadata');
+        $metadata = $data['metadata'];
 
         DB::beginTransaction();
         try {
             $attachment = new Attachment;
             $attachment->user_id = Auth()->id();
             $attachment->metadata = $metadata;
-            $attachment->collectionName = $collectionName;
+            $attachment->collection_name = $collectionName;
             $attachment->save();
             $media = $attachment->addMedia($file)
                 ->toMediaCollection($collectionName);
