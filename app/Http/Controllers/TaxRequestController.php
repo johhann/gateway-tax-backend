@@ -7,6 +7,7 @@ use App\Http\Requests\StoreTaxRequestRequest;
 use App\Http\Requests\UpdateTaxRequestRequest;
 use App\Http\Resources\TaxStationResource;
 use App\Models\TaxRequest;
+use Illuminate\Support\Facades\Auth;
 
 class TaxRequestController extends Controller
 {
@@ -23,11 +24,10 @@ class TaxRequestController extends Controller
      */
     public function store(StoreTaxRequestRequest $request)
     {
-        $profile = $request->user()->profile;
         $taxRequest = new TaxRequest(array_merge($request->validated(), [
             'status' => TaxRequestStatus::Pending,
+            'user_id' => Auth::id(),
         ]));
-        $taxRequest->profile()->associate($profile);
         $taxRequest->save();
 
         return (new TaxStationResource($taxRequest))->response()->setStatusCode(201);
