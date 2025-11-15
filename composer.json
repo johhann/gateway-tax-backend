@@ -12,7 +12,9 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
         "opcodesio/log-viewer": "^3.19",
-        "spatie/laravel-medialibrary": "^11.15"
+        "spatie/laravel-medialibrary": "^11.15",
+        "ext-libxml": "*",
+        "ext-simplexml": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
