@@ -15,11 +15,12 @@ class TaxRequestResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->resource->id,
-            'year' => $this->resource->year,
-            'full_name' => $this->resource->full_name,
-            'ssn' => $this->resource->ssn,
-            'specific_request' => $this->resource->specific_request,
+            'id' => $this->id,
+            'year' => $this->tax_year,
+            'full_name' => $this->full_name,
+            'ssn' => $this->ssn,
+            'specific_request' => $this->specific_request,
+            'status' => $this->status->value,
         ];
     }
 }

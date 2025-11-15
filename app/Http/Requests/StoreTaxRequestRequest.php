@@ -23,7 +23,7 @@ class StoreTaxRequestRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'year' => ['required', 'integer', 'min:2000', 'max:'.date('Y')],
+            'tax_year' => ['required', 'date_format:Y', 'before_or_equal:'.date('Y')],
             'full_name' => ['required', 'string', 'max:255'],
             'ssn' => ['required', 'string', 'max:11', 'unique:tax_requests,ssn'],
             'specific_request' => ['nullable', 'string'],
