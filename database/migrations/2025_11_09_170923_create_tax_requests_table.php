@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('assigned_user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->year('tax_year');
             $table->string('full_name');
-            $table->string('ssn')->unique();
+            $table->string('ssn');
             $table->text('specific_request')->nullable();
             $table->string('status');
             $table->timestamps();

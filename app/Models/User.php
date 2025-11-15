@@ -70,6 +70,11 @@ class User extends Authenticatable implements HasMedia
         return $this->hasMany(Profile::class, 'assigned_user_id');
     }
 
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class);
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === UserRole::ADMIN;

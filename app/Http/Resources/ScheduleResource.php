@@ -15,11 +15,12 @@ class ScheduleResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'scheduled_start_time' => $this->scheduled_start_time,
-            'scheduled_end_time' => $this->scheduled_end_time,
-            'type' => $this->type,
-            'branch_id' => $this->branch_id,
+            'id' => $this->resource->id,
+            'scheduled_start_time' => $this->resource->scheduled_start_time,
+            'scheduled_end_time' => $this->resource->scheduled_end_time,
+            'type' => $this->resource->type,
+            'branch_id' => $this->resource->branch_id,
+            'branch' => BranchResource::make($this->resource->branch),
         ];
     }
 }
