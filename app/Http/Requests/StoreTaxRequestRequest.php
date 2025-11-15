@@ -25,7 +25,7 @@ class StoreTaxRequestRequest extends FormRequest
         return [
             'tax_year' => ['required', 'date_format:Y', 'before_or_equal:'.date('Y')],
             'full_name' => ['required', 'string', 'max:255'],
-            'ssn' => ['required', 'string', 'max:11', 'unique:tax_requests,ssn'],
+            'ssn' => ['required', 'string', 'max:11'],
             'specific_request' => ['nullable', 'string'],
         ];
     }
