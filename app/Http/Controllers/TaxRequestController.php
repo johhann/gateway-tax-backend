@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\TaxRequestStatus;
 use App\Http\Requests\StoreTaxRequestRequest;
 use App\Http\Requests\UpdateTaxRequestRequest;
-use App\Http\Resources\TaxStationResource;
+use App\Http\Resources\TaxRequestResource;
 use App\Models\TaxRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -30,7 +30,7 @@ class TaxRequestController extends Controller
         ]));
         $taxRequest->save();
 
-        return (new TaxStationResource($taxRequest))->response()->setStatusCode(201);
+        return (new TaxRequestResource($taxRequest))->response()->setStatusCode(201);
     }
 
     /**

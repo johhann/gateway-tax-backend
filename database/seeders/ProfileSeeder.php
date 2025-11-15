@@ -86,7 +86,7 @@ class ProfileSeeder extends Seeder
             // legals
             $legal = $profile->legal()->create([
                 'legal_city_id' => $legalCities->id,
-                'branch_id' => fake()->randomElement($branches)->id,
+                'branch_id' => fake()->randomElement($branches)->id ?? null,
                 'social_security_number' => fake()->unique()->numerify('###-##-####'),
                 // 'address' => fake()->streetAddress(),
                 'filing_status' => $filingStatus = fake()->randomElement(FilingStatus::cases()),

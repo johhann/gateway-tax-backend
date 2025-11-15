@@ -17,7 +17,6 @@ class TaxRequest extends Model
     protected function casts(): array
     {
         return [
-            'year' => 'integer',
             'full_name' => 'string',
             'ssn' => 'string',
             'specific_request' => 'string',
