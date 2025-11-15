@@ -24,9 +24,9 @@ class UpdateScheduleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'scheduled_start_time' => ['required', 'date', 'before:scheduled_end_time'],
-            'scheduled_end_time' => ['required', 'date', 'after:scheduled_start_time'],
-            'type' => ['required', 'string', Rule::in(MeetingType::values())],
+            'scheduled_start_time' => ['sometimes', 'date', 'before:scheduled_end_time'],
+            'scheduled_end_time' => ['sometimes', 'date', 'after:scheduled_start_time'],
+            'type' => ['sometimes', 'string', Rule::in(MeetingType::values())],
             'branch_id' => ['required_if:type,=,in_person_meeting', 'exists:branches,id'],
         ];
     }
