@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Auth;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class StoreTaxRequestRequest extends FormRequest
 {
@@ -23,9 +23,9 @@ class StoreTaxRequestRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'year' => ['required', 'integer', 'min:2000', 'max:'.date('Y')],
+            'tax_year' => ['required', 'integer', 'min:2000', 'max:'.date('Y')],
             'full_name' => ['required', 'string', 'max:255'],
-            'ssn' => ['required', 'string', 'max:11', 'unique:tax_requests,ssn'],
+            'ssn' => ['required', 'string', 'max:11'],
             'specific_request' => ['nullable', 'string'],
         ];
     }
