@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\ScheduleStatus;
+use App\Enums\ScheduleType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,6 +19,8 @@ class Schedule extends Model
         return [
             'scheduled_start_time' => 'datetime',
             'scheduled_end_time' => 'datetime',
+            'status' => ScheduleStatus::class,
+            'type' => ScheduleType::class,
         ];
     }
 

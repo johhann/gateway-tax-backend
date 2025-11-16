@@ -59,9 +59,7 @@ class ProfileResource extends Resource
             ->recordActions([
                 ActionGroup::make([
                     self::assignBranchAction(),
-                    self::changeBranchAction(),
                     self::assignAccountantAction(),
-                    self::changeAccountantAction(),
                 ]),
             ], position: RecordActionsPosition::BeforeColumns);
     }
@@ -69,10 +67,11 @@ class ProfileResource extends Resource
     public static function assignBranchAction(): Action
     {
         return Action::make('Assign Branch')
-            ->visible(fn (Profile $record) => (auth()->user()->isOperation() || auth()->user()->isAdmin()) && $record->assigned_branch_id === null)
+            ->visible(fn (Profile $record) => (auth()->user()->isOperation() || auth()->user()->isAdmin()))
             ->slideOver()
-            ->color('primary')
-            ->icon('heroicon-o-plus')
+            ->label(fn ($record) => $record->assigned_branch_id ? 'Change Branch' : 'Assign Branch')
+            ->color(fn ($record) => $record->assigned_branch_id ? 'secondary' : 'primary')
+            ->icon('heroicon-o-building-office')
             ->modalWidth('sm')
             ->schema([
                 Select::make('branch_id')
@@ -88,42 +87,18 @@ class ProfileResource extends Resource
             });
     }
 
-    public static function changeBranchAction(): Action
-    {
-        return Action::make('Change Branch')
-            ->visible(fn (Profile $record) => (auth()->user()->isOperation() || auth()->user()->isAdmin()) && $record->assigned_branch_id)
-            ->slideOver()
-            ->color('success')
-            ->icon('heroicon-o-cube-transparent')
-            ->modalWidth('sm')
-            ->schema(function (Profile $record) {
-                return [
-                    Select::make('branch_id')
-                        ->label('Branch')
-                        ->default($record->assigned_branch_id)
-                        ->options(Branch::pluck('name', 'id'))
-                        ->required()
-                        ->searchable(),
-                ];
-            })
-            ->action(function (Profile $record, array $data): void {
-                $record->update([
-                    'assigned_branch_id' => $data['branch_id'],
-                ]);
-            });
-    }
-
     public static function assignAccountantAction(): Action
     {
         return Action::make('Assign Accountant')
-            ->visible(fn (Profile $record) => (auth()->user()->isOperation() || auth()->user()->isAdmin() || auth()->user()->isBranchManager()) && $record->assigned_branch_id && $record->assigned_user_id === null)
+            ->visible(fn (Profile $record) => (auth()->user()->isOperation() || auth()->user()->isAdmin() || auth()->user()->isBranchManager()) && $record->assigned_branch_id)
             ->slideOver()
-            ->color('warning')
-            ->icon('heroicon-o-cube-transparent')
+            ->label(fn ($record) => $record->assigned_user_id ? 'Change Accountant' : 'Assign Accountant')
+            ->color(fn ($record) => $record->assigned_user_id ? 'secondary' : 'primary')
+            ->icon('heroicon-o-user')
             ->modalWidth('sm')
             ->schema(function (Profile $record) {
                 return [
-                    Select::make('user_id')
+                    Select::make('assigned_user_id')
                         ->label('Accountant')
                         ->default($record->assigned_user_id)
                         ->options(User::accountant()->where('branch_id', $record->assigned_branch_id)->get()->pluck('name', 'id'))
@@ -133,44 +108,7 @@ class ProfileResource extends Resource
             })
             ->action(function (Profile $record, array $data): void {
                 $record->update([
-                    'assigned_user_id' => $data['user_id'],
-                ]);
-            });
-    }
-
-    public static function changeAccountantAction(): Action
-    {
-        return Action::make('Change Accountant')
-            ->visible(
-                fn (Profile $record) => (
-                    auth()->user()->isOperation() ||
-                    auth()->user()->isAdmin() || auth()->user()->isBranchManager()
-                ) &&
-                    $record->assigned_branch_id &&
-                    $record->assigned_user_id
-            )
-            ->slideOver()
-            ->color('warning')
-            ->icon('heroicon-o-cube-transparent')
-            ->modalWidth('sm')
-            ->schema(function (Profile $record) {
-                return [
-                    Select::make('user_id')
-                        ->label('Accountant')
-                        ->default($record->assigned_user_id)
-                        ->options(
-                            User::accountant()
-                                ->where('branch_id', $record->assigned_branch_id)
-                                ->get()
-                                ->pluck('first_name', 'id')
-                        )
-                        ->required()
-                        ->searchable(),
-                ];
-            })
-            ->action(function (Profile $record, array $data): void {
-                $record->update([
-                    'assigned_user_id' => $data['user_id'],
+                    'assigned_user_id' => $data['assigned_user_id'],
                 ]);
             });
     }
