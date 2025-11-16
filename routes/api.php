@@ -12,6 +12,7 @@ use App\Http\Controllers\LegalController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SummaryController;
 use App\Http\Controllers\TaxRequestController;
@@ -92,6 +93,7 @@ Route::prefix('v1')->group(function () {
         Route::get('cities', [LegalCityController::class, '__invoke']);
         Route::get('tax-stations', [TaxStationController::class, '__invoke']);
         Route::get('summary', [SummaryController::class, '__invoke']);
+        Route::get('progress', [ProgressController::class, '__invoke']);
         Route::post('tax-request', [TaxRequestController::class, 'store']);
         Route::get('schedule', [ScheduleController::class, 'show']);
         Route::get('schedules', [ScheduleController::class, 'index']);
