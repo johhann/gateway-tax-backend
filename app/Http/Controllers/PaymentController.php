@@ -32,7 +32,7 @@ class PaymentController extends Controller
      */
     public function show($id)
     {
-        $payment = Payment::where('id_id', $id)->first();
+        $payment = Payment::where('id', $id)->first();
 
         if (! $payment) {
             return response()->json(['message' => 'Payment not found'], 404);
