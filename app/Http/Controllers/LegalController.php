@@ -21,30 +21,35 @@ class LegalController extends Controller
         unset($validated['dependants']);
 
         $legal = null;
-        DB::transaction(function () use ($validated, $dependants, &$legal) {
-            $profile = auth()->user()->profile;
-            $legal = Legal::query()->updateOrCreate(
-                ['profile_id' => $profile->id],
-                $validated
-            );
+        DB::beginTransaction();
 
-            foreach ($dependants as $dependantData) {
-                $profile->dependants()->create($dependantData);
-            }
-        });
+        $profile = auth()->user()->profile;
+        $legal = Legal::query()->updateOrCreate(
+            ['profile_id' => $validated['profile_id']],
+            $validated
+        );
+
+        foreach ($dependants as $dependantData) {
+            $profile->dependants()->create($dependantData);
+        }
+
+        DB::commit();
 
         return (new LegalResource($legal->load(['city', 'branch', 'profile.dependants'])))->response()->setStatusCode(201);
-
     }
 
     /**
      * Display the specified resource.
      */
-    public function show()
+    public function show($id)
     {
-        $legal = Legal::query()->where('legals.profile_id', auth()->user()->profile->id)
+        $legal = Legal::query()->where('legals.profile_id', $id)
             ->with(['legalCity', 'legalLocation', 'dependants'])
-            ->firstOrFail();
+            ->first();
+
+        if (! $legal) {
+            return response()->json(['message' => 'Legal not found.'], 404);
+        }
 
         return new LegalResource($legal);
     }
@@ -58,33 +63,34 @@ class LegalController extends Controller
         $dependants = $validated['dependants'] ?? [];
         unset($validated['dependants']);
 
-        DB::transaction(function () use ($dependants, $validated) {
-            $legal = Legal::query()->where('legals.profile_id', auth()->user()->profile->id)
-                ->with(['dependants'])
-                ->firstOrFail();
+        DB::beginTransaction();
+        $legal = Legal::query()->where('legals.profile_id', $validated['profile_id'])
+            ->with(['dependants'])
+            ->firstOrFail();
 
-            $legal->update($validated);
+        $legal->update($validated);
 
-            $existingDependantIds = $legal->dependants->pluck('id')->toArray();
-            $incomingDependantIds = collect($dependants)->pluck('id')->filter()->toArray();
+        $existingDependantIds = $legal->dependants->pluck('id')->toArray();
+        $incomingDependantIds = collect($dependants)->pluck('id')->filter()->toArray();
 
-            $dependantsToDelete = array_diff($existingDependantIds, $incomingDependantIds);
+        $dependantsToDelete = array_diff($existingDependantIds, $incomingDependantIds);
 
-            if (! empty($dependantsToDelete)) {
-                $legal->dependants()->whereIn('id', $dependantsToDelete)->delete();
+        if (! empty($dependantsToDelete)) {
+            $legal->dependants()->whereIn('id', $dependantsToDelete)->delete();
+        }
+
+        foreach ($dependants as $dependantData) {
+            if (isset($dependantData['id'])) {
+                $legal->dependants()->where('id', $dependantData['id'])->update($dependantData);
+            } else {
+                $legal->dependants()->create($dependantData);
             }
+        }
 
-            foreach ($dependants as $dependantData) {
-                if (isset($dependantData['id'])) {
-                    $legal->dependants()->where('id', $dependantData['id'])->update($dependantData);
-                } else {
-                    $legal->dependants()->create($dependantData);
-                }
-            }
-        });
+        DB::commit();
 
-        $updatedLegal = Legal::query()->where('legals.profile_id', auth()->user()->profile->id)
-            ->with(['legalCity', 'legalLocation', 'dependants'])
+        $updatedLegal = $legal
+            ->loadMissing(['legalCity', 'legalLocation', 'dependants'])
             ->firstOrFail();
 
         return new LegalResource($updatedLegal);

@@ -19,7 +19,7 @@ class PaymentController extends Controller
         unset($data['direct_deposit_info.check_id']);
 
         $payment = Payment::query()->updateOrCreate(
-            ['profile_id' => auth()->user()->profile->id],
+            ['profile_id' => $data['profile_id']],
             $data
         );
         $payment->attachAttachments($checkAttachment);
@@ -30,9 +30,9 @@ class PaymentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show()
+    public function show($id)
     {
-        $payment = Payment::where('profile_id', auth()->user()->profile->id)->first();
+        $payment = Payment::where('id_id', $id)->first();
 
         if (! $payment) {
             return response()->json(['message' => 'Payment not found'], 404);

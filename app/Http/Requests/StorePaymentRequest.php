@@ -39,6 +39,7 @@ class StorePaymentRequest extends FormRequest
             'direct_deposit_info.branch_code' => ['nullable', 'string'],
             'direct_deposit_info.check_id' => ['required', 'exists:attachments,id'],
             'refund_fee' => ['required_without_all:type,refund_method', 'string', Rule::in(RefundFee::values())],
+            'profile_id' => ['required', 'exists:profiles,id'],
         ];
     }
 }

@@ -16,7 +16,7 @@ class BusinessController extends Controller
     {
         $data = $request->validated();
         $business = Business::query()->updateOrCreate(
-            ['profile_id' => auth()->user()->profiles->latest()->first()->id],
+            ['profile_id' => $data['profile_id']],
             $data
         );
 
@@ -26,9 +26,9 @@ class BusinessController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show()
+    public function show($id)
     {
-        $business = Business::where('profile_id', auth()->user()->profiles->latest()->first()->id)->first();
+        $business = Business::where('profile_id', $id)->first();
 
         if (! $business) {
             return response()->json(['message' => 'Business not found'], 404);
@@ -42,14 +42,14 @@ class BusinessController extends Controller
      */
     public function update(UpdateBusinessRequest $request)
     {
-        $business = Business::where('profile_id', auth()->user()->profiles->id)->latest()->first();
+        $business = Business::where('profile_id', $request->validated('profile_id'))->first();
 
         if (! $business) {
             return response()->json(['message' => 'Business not found'], 404);
         }
 
-        $business->update($request->validated())->refresh();
+        $business->update($request->validated());
 
-        return new BusinessResource($business);
+        return new BusinessResource($business->refresh());
     }
 }

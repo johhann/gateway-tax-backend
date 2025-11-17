@@ -30,7 +30,7 @@ return new class extends Migration
             $table->boolean('self_employment_income')->default(false);
             $table->string('progress_status')->default(ProfileProgressStatus::PENDING->value);
             $table->string('user_status');
-            $table->string('ssn')->unique();
+            $table->string('ssn');
 
             $table->timestamps();
             $table->softDeletes();

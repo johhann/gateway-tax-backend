@@ -25,6 +25,7 @@ class StoreLegalRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'profile_id' => ['required', 'exists:profiles,id'],
             'legal_city_id' => ['required', 'exists:legal_cities,id'],
             'legal_location_id' => ['required', Rule::exists('legal_locations')->where(function ($query) {
                 $query->where('legal_city_id', $this->input('legal_city_id'));

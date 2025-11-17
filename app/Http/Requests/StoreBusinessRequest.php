@@ -42,6 +42,7 @@ class StoreBusinessRequest extends FormRequest
             'records' => ['nullable', Rule::in('Accounting Records', 'Computer Records', 'Business Bank Accounts', 'Paid Invoices/Receipts', 'Business Stationery', 'Insurance', 'Advertising', 'Car/Truck Expense', 'Rental Expense', 'Other')],
             'other_record' => ['required_if:records,Other', 'nullable', 'string'],
             'file_taxed_for_tax_year' => ['required', 'boolean'],
+            'profile_id' => ['required', 'exists:profiles,id'],
         ];
     }
 }

@@ -11,13 +11,12 @@ class ProgressController extends Controller
     /**
      * Handle the incoming request and return user's progress.
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request, $id)
     {
         $user = auth()->user();
 
         $profile = Profile::with(['identification', 'business', 'legal', 'payment'])
-            ->where('user_id', $user->id)
-            ->latest()
+            ->where('id', $id)
             ->first();
 
         if (! $profile) {

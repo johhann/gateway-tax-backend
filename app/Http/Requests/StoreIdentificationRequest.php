@@ -34,6 +34,7 @@ class StoreIdentificationRequest extends FormRequest
                 'license_expiration_date' => ['required', 'date', 'after:license_issue_date', 'after_or_equal:today'],
                 'license_front_image_id' => ['required', 'exists:attachments,id'],
                 'license_back_image_id' => ['required', 'exists:attachments,id'],
+                'profile_id' => ['required', 'exists:profiles,id'],
             ]);
         })();
     }

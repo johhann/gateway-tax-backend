@@ -64,24 +64,24 @@ Route::prefix('v1')->group(function () {
     // STEP TWO
     Route::prefix('stepTwo')->middleware(['auth:sanctum', 'ability:access-token'])->group(function () {
         Route::post('identification', [IdentificationController::class, 'store']);
-        Route::get('identification', [IdentificationController::class, 'show']);
+        Route::get('identification/{profile}', [IdentificationController::class, 'show']);
         Route::put('identification', [IdentificationController::class, 'update']);
     });
 
     Route::prefix('stepThree')->middleware(['auth:sanctum', 'ability:access-token'])->group(function () {
         Route::post('business', [BusinessController::class, 'store']);
-        Route::get('business', [BusinessController::class, 'show']);
+        Route::get('business/{profile}', [BusinessController::class, 'show']);
         Route::put('business', [BusinessController::class, 'update']);
     });
 
     Route::prefix('stepFive')->middleware(['auth:sanctum', 'ability:access-token'])->group(function () {
-        Route::get('legal', [LegalController::class, 'show']);
+        Route::get('legal/{profile}', [LegalController::class, 'show']);
         Route::post('legal', [LegalController::class, 'store']);
         Route::put('legal', [LegalController::class, 'update']);
     });
 
     Route::prefix('stepSix')->middleware(['auth:sanctum', 'ability:access-token'])->group(function () {
-        Route::get('payment', [PaymentController::class, 'show']);
+        Route::get('payment/{profile}', [PaymentController::class, 'show']);
         Route::post('payment', [PaymentController::class, 'store']);
         Route::put('payment', [PaymentController::class, 'update']);
     });

@@ -30,6 +30,7 @@ class UpdateIdentificationRequest extends FormRequest
             'issuing_state' => ['sometimes', 'required', 'string', new StateValidation],
             'license_issue_date' => ['sometimes', 'required', 'date', 'before:license_expiration_date', 'before:today'],
             'license_expiration_date' => ['sometimes', 'required', 'date', 'after:license_issue_date', 'after_or_equal:today'],
+            'profile_id' => 'required|exists:profiles,id',
         ]);
     }
 }

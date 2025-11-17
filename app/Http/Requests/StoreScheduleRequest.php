@@ -7,6 +7,7 @@ use App\Enums\ScheduleSession;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 
 class StoreScheduleRequest extends FormRequest
 {
@@ -29,7 +30,7 @@ class StoreScheduleRequest extends FormRequest
             'scheduled_start_time' => ['required', 'date', 'before:scheduled_end_time'],
             'scheduled_end_time' => ['required', 'date', 'after:scheduled_start_time'],
             'type' => ['required', 'string', Rule::in(MeetingType::values())],
-            'session' => ['required', 'string', Rule::in(ScheduleSession::values())],
+            'session' => ['required', 'string', new Enum(ScheduleSession::class)],
             'branch_id' => ['required_if:type,=,in_person_meeting', 'exists:branches,id'],
         ];
     }
