@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Enums\LicenseType;
 use App\Rules\StateValidation;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class StoreIdentificationRequest extends FormRequest
@@ -14,7 +15,7 @@ class StoreIdentificationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Auth()->check();
+        return Auth::check();
     }
 
     /**

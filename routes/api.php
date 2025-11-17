@@ -95,7 +95,12 @@ Route::prefix('v1')->group(function () {
         Route::get('summary', [SummaryController::class, '__invoke']);
         Route::get('progress', [ProgressController::class, '__invoke']);
         Route::post('tax-request', [TaxRequestController::class, 'store']);
-        Route::get('schedule', [ScheduleController::class, 'show']);
+
+        /**
+         * Schedules
+         */
+        Route::get('schedule/{schedule}', [ScheduleController::class, 'show']);
+        Route::get('schedule-latest', [ScheduleController::class, 'latest']);
         Route::get('schedules', [ScheduleController::class, 'index']);
         Route::post('schedule', [ScheduleController::class, 'store']);
         Route::put('schedule/{schedule}', [ScheduleController::class, 'update']);
