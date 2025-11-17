@@ -6,6 +6,7 @@ use App\Http\Requests\StoreLegalRequest;
 use App\Http\Requests\UpdateLegalRequest;
 use App\Http\Resources\LegalResource;
 use App\Models\Legal;
+use App\Models\Profile;
 use Illuminate\Support\Facades\DB;
 
 class LegalController extends Controller
@@ -42,12 +43,14 @@ class LegalController extends Controller
     public function show($id)
     {
         $legal = Legal::query()->where('legals.profile_id', $id)
-            ->with(['legalCity', 'branches', 'dependants'])
+            ->with(['city', 'branch'])
             ->first();
 
         if (! $legal) {
             return response()->json(['message' => 'Legal not found.'], 404);
         }
+
+        $legal->dependants = $legal->profile->dependants;
 
         return new LegalResource($legal);
     }
@@ -58,37 +61,42 @@ class LegalController extends Controller
     public function update(UpdateLegalRequest $request)
     {
         $validated = $request->validated();
+        $profile = Profile::query()->where('id', $validated['profile_id'])->first();
+
+        if (! $profile) {
+            return response()->json(['message' => 'Profile not found.'], 404);
+        }
+
         $dependants = $validated['dependants'] ?? [];
         unset($validated['dependants']);
 
         DB::beginTransaction();
         $legal = Legal::query()->where('legals.profile_id', $validated['profile_id'])
-            ->with(['dependants'])
             ->firstOrFail();
 
         $legal->update($validated);
 
-        $existingDependantIds = $legal->dependants->pluck('id')->toArray();
+        $existingDependantIds = $profile->dependants->pluck('id')->toArray();
         $incomingDependantIds = collect($dependants)->pluck('id')->filter()->toArray();
 
         $dependantsToDelete = array_diff($existingDependantIds, $incomingDependantIds);
 
         if (! empty($dependantsToDelete)) {
-            $legal->dependants()->whereIn('id', $dependantsToDelete)->delete();
+            $profile->dependants()->whereIn('id', $dependantsToDelete)->delete();
         }
 
         foreach ($dependants as $dependantData) {
             if (isset($dependantData['id'])) {
-                $legal->dependants()->where('id', $dependantData['id'])->update($dependantData);
+                $profile->dependants()->where('id', $dependantData['id'])->update($dependantData);
             } else {
-                $legal->dependants()->create($dependantData);
+                $profile->dependants()->create($dependantData);
             }
         }
 
         DB::commit();
 
         $updatedLegal = $legal
-            ->loadMissing(['legalCity', 'legalLocation', 'dependants'])
+            ->loadMissing(['city', 'branch', 'profile.dependants'])
             ->firstOrFail();
 
         return new LegalResource($updatedLegal);
