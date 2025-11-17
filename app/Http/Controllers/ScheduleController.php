@@ -36,9 +36,14 @@ class ScheduleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show()
+    public function show(Schedule $schedule)
     {
-        $schedule = Schedule::query()->where('user_id', Auth::id())->with('branch')->latest()->first();
+        return new ScheduleResource($schedule);
+    }
+
+    public function latest()
+    {
+        $schedule = Schedule::query()->latest()->first();
 
         return new ScheduleResource($schedule);
     }
