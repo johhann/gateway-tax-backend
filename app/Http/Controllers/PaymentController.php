@@ -15,8 +15,8 @@ class PaymentController extends Controller
     public function store(StorePaymentRequest $request)
     {
         $data = $request->validated();
-        $checkAttachment = $data['direct_deposit_info.check_id'];
-        unset($data['direct_deposit_info.check_id']);
+        $checkAttachment = $data['direct_deposit_info']['check_id'];
+        unset($data['direct_deposit_info']['check_id']);
 
         $payment = Payment::query()->updateOrCreate(
             ['profile_id' => $data['profile_id']],
@@ -46,7 +46,7 @@ class PaymentController extends Controller
      */
     public function update(UpdatePaymentRequest $request, Payment $payment)
     {
-        $payment = Payment::where('profile_id', auth()->user()->profile->id)->first();
+        $payment = Payment::where('profile_id', $request->profile_id)->first();
 
         if (! $payment) {
             return response()->json(['message' => 'Payment not found'], 404);

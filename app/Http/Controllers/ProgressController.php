@@ -13,8 +13,6 @@ class ProgressController extends Controller
      */
     public function __invoke(Request $request, $id)
     {
-        $user = auth()->user();
-
         $profile = Profile::with(['identification', 'business', 'legal', 'payment'])
             ->where('id', $id)
             ->first();

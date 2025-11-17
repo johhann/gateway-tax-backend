@@ -88,17 +88,17 @@ class IdentificationController extends Controller
     {
         $validated = $request->validated();
 
-        $profile = Profile::where('id', $validated['profile_id']) ?? null;
+        $profile = Profile::where('id', $validated['profile_id'])->first() ?? null;
         if (! $profile) {
             return response()->json(['message' => 'Profile not found.'], 404);
         }
 
-        $identification = Identification::where('profile_id', $profile->id)->latest()->first();
+        $identification = Identification::where('profile_id', $validated['profile_id'])->latest()->first();
         if (! $identification) {
             return response()->json(['message' => 'Identification not found.'], 404);
         }
 
-        $address = Address::where('profile_id', $profile->id)->latest()->first();
+        $address = Address::where('profile_id', $validated['profile_id'])->latest()->first();
 
         DB::transaction(function () use ($validated, $identification, &$address, $profile) {
             $identData = [];
@@ -145,8 +145,8 @@ class IdentificationController extends Controller
         $address = $address ? $address->fresh() : null;
 
         return response()->json([
-            'identification' => new IdentificationResource($identification),
-            'address' => $address ? new AddressResource($address) : null,
+            'identification' => new IdentificationResource($identification->refresh()),
+            'address' => $address ? new AddressResource($address->refresh()) : null,
             'license_front_image_id' => $identification->attachments()->where('metadata', 'license_front')->pluck('id'),
             'license_back_image_id' => $identification->attachments()->where('metadata', 'license_back')->pluck('id'),
         ]);

@@ -33,9 +33,9 @@ class SchedulesTable
                 TextColumn::make('type')
                     ->badge(fn ($state) => $state === 'online_call' ? 'primary' : 'warning')
                     ->searchable(),
-                TextColumn::make('created_at')
-                    ->date()
-                    ->sortable(),
+                TextColumn::make('status')
+                    ->color(fn ($state) => $state->color())
+                    ->searchable(),
             ])
             ->filters([
                 TrashedFilter::make(),

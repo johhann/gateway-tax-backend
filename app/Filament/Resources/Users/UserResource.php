@@ -8,6 +8,7 @@ use App\Filament\Resources\Users\Pages\ListUsers;
 use App\Filament\Resources\Users\Pages\ViewUser;
 use App\Filament\Resources\Users\RelationManagers\AssignedTaxRequestsRelationManager;
 use App\Filament\Resources\Users\RelationManagers\ProfilesRelationManager;
+use App\Filament\Resources\Users\RelationManagers\SchedulesRelationManager;
 use App\Filament\Resources\Users\Schemas\UserForm;
 use App\Filament\Resources\Users\Schemas\UserInfolist;
 use App\Filament\Resources\Users\Tables\UsersTable;
@@ -25,6 +26,8 @@ class UserResource extends Resource
     protected static ?string $model = User::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::UserGroup;
+
+    protected static ?string $navigationLabel = 'Employees';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -48,6 +51,7 @@ class UserResource extends Resource
         return [
             ProfilesRelationManager::class,
             AssignedTaxRequestsRelationManager::class,
+            // SchedulesRelationManager::class,
         ];
     }
 

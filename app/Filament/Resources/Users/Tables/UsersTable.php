@@ -23,8 +23,10 @@ class UsersTable
             ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('role', [UserRole::ACCOUNTANT, UserRole::BRANCH_MANAGER]))
             ->columns([
                 TextColumn::make('first_name')
+                    ->sortable()
                     ->searchable(),
                 TextColumn::make('last_name')
+                    ->sortable()
                     ->searchable(),
                 TextColumn::make('phone')
                     ->searchable(),
@@ -37,6 +39,7 @@ class UsersTable
                 IconColumn::make('status')
                     ->boolean(),
                 TextColumn::make('branch.name')
+                    ->limit(20)
                     ->sortable(),
             ])
             ->filters([

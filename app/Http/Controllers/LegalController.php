@@ -22,15 +22,13 @@ class LegalController extends Controller
 
         $legal = null;
         DB::beginTransaction();
-
-        $profile = auth()->user()->profile;
         $legal = Legal::query()->updateOrCreate(
             ['profile_id' => $validated['profile_id']],
             $validated
         );
 
         foreach ($dependants as $dependantData) {
-            $profile->dependants()->create($dependantData);
+            $legal->profile->dependants()->create($dependantData);
         }
 
         DB::commit();
@@ -44,7 +42,7 @@ class LegalController extends Controller
     public function show($id)
     {
         $legal = Legal::query()->where('legals.profile_id', $id)
-            ->with(['legalCity', 'legalLocation', 'dependants'])
+            ->with(['legalCity', 'branches', 'dependants'])
             ->first();
 
         if (! $legal) {

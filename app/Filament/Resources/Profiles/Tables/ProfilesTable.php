@@ -28,31 +28,31 @@ class ProfilesTable
     public static function configure(Table $table, $status = null): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => $query->orderBy('id', 'desc'))
+            ->modifyQueryUsing(fn (Builder $query) => $query->with('assignedTo')->orderBy('id', 'desc'))
             ->columns([
                 TextColumn::make('id')
                     ->sortable(),
                 TextColumn::make('name')
                     ->state(fn ($record) => $record->name)
+                    ->description(fn ($record) => $record->phone)
                     ->searchable(true, function ($query, $search) {
                         return $query
                             ->where('first_name', 'like', "%{$search}%")
                             ->orWhere('middle_name', 'like', "%{$search}%")
                             ->orWhere('last_name', 'like', "%{$search}%");
                     }),
-                TextColumn::make('taxStation.name')
-                    ->searchable(),
+                // TextColumn::make('taxStation.name')
+                //     ->searchable(),
                 TextColumn::make('branch.name')
                     ->placeholder('-')
+                    ->description(fn ($record) => $record->assignedTo?->name)
                     ->hidden(auth()->user()->isAccountant() || auth()->user()->isBranchManager())
                     ->limit(20)
                     ->searchable(),
-                TextColumn::make('assignedTo.name')
-                    ->placeholder('-')
-                    ->hidden(auth()->user()->isAccountant())
-                    ->searchable(),
-                TextColumn::make('phone')
-                    ->searchable(),
+                // TextColumn::make('assignedTo.name')
+                //     ->placeholder('-')
+                //     ->hidden(auth()->user()->isAccountant())
+                //     ->searchable(),
                 TextColumn::make('self_employment_income')
                     ->label('Self Employed')
                     ->state(fn ($record) => $record->self_employment_income ? 'Yes' : 'No')

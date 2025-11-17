@@ -25,6 +25,7 @@ enum ProfileUserStatus: string
     public function color(): string
     {
         return match ($this) {
+            self::DRAFT => 'secondary',
             self::SUBMITTED => 'secondary',
             self::PROCESSING => 'warning',
             self::PROCESSED => 'success',
