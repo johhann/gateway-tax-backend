@@ -9,6 +9,7 @@ use App\Enums\LicenseType;
 use App\Enums\RefundMethod;
 use App\Enums\RefundType;
 use App\Enums\StateEnum;
+use App\Models\Branch;
 use App\Models\LegalCity;
 use App\Models\Profile;
 use Illuminate\Database\Seeder;
@@ -21,7 +22,7 @@ class ProfileSeeder extends Seeder
     public function run(): void
     {
         $legalCities = LegalCity::with('branches')->inRandomOrder()->first();
-        $branches = $legalCities->branches;
+        $branches = Branch::pluck('id');
         $profiles = Profile::factory(50)->create();
 
         foreach ($profiles as $profile) {
@@ -86,7 +87,7 @@ class ProfileSeeder extends Seeder
             // legals
             $legal = $profile->legal()->create([
                 'legal_city_id' => $legalCities->id,
-                'branch_id' => fake()->randomElement($branches)->id ?? null,
+                'branch_id' => fake()->randomElement($branches) ?? null,
                 'social_security_number' => fake()->unique()->numerify('###-##-####'),
                 // 'address' => fake()->streetAddress(),
                 'filing_status' => $filingStatus = fake()->randomElement(FilingStatus::cases()),

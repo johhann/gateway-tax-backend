@@ -27,7 +27,7 @@ class TaxRequestResource extends Resource
 {
     protected static ?string $model = TaxRequest::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::DocumentChartBar;
 
     protected static ?string $recordTitleAttribute = 'full_name';
 
@@ -85,9 +85,10 @@ class TaxRequestResource extends Resource
     public static function assignUserAction(): Action
     {
         return Action::make('Assign Accountant')
+            ->label(fn ($record) => $record->assigned_user_id ? 'Change Accountant' : 'Assign Accountant')
+            ->color(fn ($record) => $record->assigned_user_id ? 'warning' : 'success')
             ->visible(fn () => (auth()->user()->isOperation() || auth()->user()->isAdmin() || auth()->user()->isBranchManager()))
             ->slideOver()
-            ->color('success')
             ->icon('heroicon-o-plus')
             ->modalWidth('sm')
             ->schema(function ($record) {

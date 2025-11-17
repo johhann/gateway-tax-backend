@@ -23,6 +23,8 @@ class LegalCityResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::RectangleGroup;
 
+    protected static ?string $navigationLabel = 'City';
+
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Schema $schema): Schema

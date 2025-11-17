@@ -14,6 +14,7 @@ class ViewTaxRequest extends ViewRecord
     {
         return [
             EditAction::make(),
+            TaxRequestResource::assignUserAction(),
         ];
     }
 }

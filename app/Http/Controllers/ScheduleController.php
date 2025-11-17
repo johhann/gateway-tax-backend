@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ScheduleStatus;
 use App\Http\Requests\StoreScheduleRequest;
 use App\Http\Requests\UpdateScheduleRequest;
 use App\Http\Resources\ScheduleResource;
@@ -28,6 +29,7 @@ class ScheduleController extends Controller
         $schedule = Schedule::create([
             'user_id' => Auth::id(),
             ...$request->validated(),
+            'status' => ScheduleStatus::Pending,
         ]);
 
         return new ScheduleResource($schedule);

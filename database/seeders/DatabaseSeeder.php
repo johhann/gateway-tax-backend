@@ -17,11 +17,12 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             LegalCitySeeder::class,
-            //            BranchSeeder::class,
+            // BranchSeeder::class,
             TaxStationSeeder::class,
             UserSeeder::class,
             ProfileSeeder::class,
             TaxRequestSeeder::class,
+            ScheduleSeeder::class,
         ]);
 
         DB::commit();

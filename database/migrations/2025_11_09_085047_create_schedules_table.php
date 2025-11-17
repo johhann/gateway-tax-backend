@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::create('schedules', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('branch_id')->nullable()->constrained('branches');
             $table->timestampTz('scheduled_start_time');
             $table->timestampTz('scheduled_end_time');
             $table->string('type');
             $table->string('session');
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('branch_id')->nullable()->constrained();
+            $table->string('status');
             $table->timestamps();
             $table->softDeletes();
         });
