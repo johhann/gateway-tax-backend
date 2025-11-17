@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('refund_fee')->nullable();
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

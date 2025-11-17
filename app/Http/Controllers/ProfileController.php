@@ -20,7 +20,7 @@ class ProfileController extends Controller
         $data['user_id'] = Auth::id();
         $data['user_status'] = ProfileUserStatus::DRAFT;
 
-        $profile = Profile::create($data);
+        $profile = Profile::query()->create($data);
 
         return (new ProfileResource($profile))->response()->setStatusCode(201);
     }
@@ -30,8 +30,8 @@ class ProfileController extends Controller
      */
     public function show()
     {
-        $profile = Profile::where('user_id', Auth::id())
-            ->first();
+        $profile = Profile::query()->where('user_id', Auth::id())
+            ->latest()->first();
 
         if (! $profile) {
             return response()->json(['message' => 'Profile not found'], 404);
@@ -45,8 +45,8 @@ class ProfileController extends Controller
      */
     public function update(UpdateProfileRequest $request)
     {
-        $profile = Profile::where('user_id', Auth::id())
-            ->first();
+        $profile = Profile::query()->where('user_id', Auth::id())
+            ->latest()->first();
 
         if (! $profile) {
             return response()->json(['message' => 'Profile not found'], 404);

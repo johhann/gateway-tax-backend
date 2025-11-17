@@ -19,7 +19,6 @@ class ScheduleResource extends JsonResource
             'scheduled_start_time' => $this->resource->scheduled_start_time,
             'scheduled_end_time' => $this->resource->scheduled_end_time,
             'type' => $this->resource->type,
-            'branch_id' => $this->resource->branch_id,
             'branch' => BranchResource::make($this->resource->branch),
         ];
     }

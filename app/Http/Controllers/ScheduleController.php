@@ -16,7 +16,7 @@ class ScheduleController extends Controller
      */
     public function index()
     {
-        $schedules = Auth::user()->schedules()->with('branch')->latest()->get();
+        $schedules = Schedule::query()->where('user_id', Auth::id())->with('branch')->get();
 
         return ScheduleResource::collection($schedules);
     }
@@ -38,8 +38,10 @@ class ScheduleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Schedule $schedule)
+    public function show()
     {
+        $schedule = Schedule::query()->where('user_id', Auth::id())->with('branch')->latest()->first();
+
         return new ScheduleResource($schedule);
     }
 

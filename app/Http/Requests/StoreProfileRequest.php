@@ -36,7 +36,7 @@ class StoreProfileRequest extends FormRequest
             'hear_from' => ['required', Rule::in(InformationSource::values())],
             'occupation' => 'required|string',
             'self_employment_income' => 'required|boolean',
-            'ssn' => 'required|string|unique:profiles,ssn|max:9',
+            'ssn' => 'required|string|max:9',
         ];
     }
 }

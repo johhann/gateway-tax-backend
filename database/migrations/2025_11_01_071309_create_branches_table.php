@@ -24,7 +24,7 @@ return new class extends Migration
         Schema::table('legals', function (Blueprint $table) {
             $table->dropForeign(['legal_location_id']);
             $table->dropColumn('legal_location_id');
-            $table->foreignId('branch_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('branch_id')->nullable()->constrained()->cascadeOnDelete();
         });
     }
 
