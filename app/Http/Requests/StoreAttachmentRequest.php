@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\CollectionName;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreAttachmentRequest extends FormRequest
 {
@@ -22,9 +24,23 @@ class StoreAttachmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'collection_name' => 'required|string|max:100',
+            'collection_name' => ['required', Rule::in(array_filter(
+                CollectionName::values(), fn ($value) => $value !== CollectionName::PDFAttachments->value
+            ))],
             'file' => 'required|file|max:20480',
             'metadata' => 'nullable|string',
+        ];
+    }
+
+    public function messages(): array
+    {
+        $allowed = array_filter(
+            CollectionName::values(),
+            fn ($value) => $value !== CollectionName::PDFAttachments->value
+        );
+
+        return [
+            'collection_name.in' => 'The selected collection_name is invalid. Allowed values: '.implode(', ', $allowed),
         ];
     }
 }

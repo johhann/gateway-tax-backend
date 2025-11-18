@@ -3,14 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAttachmentRequest;
+use App\Jobs\ConvertAttachmentToPdf;
 use App\Models\Attachment;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class UploadController extends Controller
 {
-    public function show(Attachment $attachment)
+    public function show($id)
     {
+        $attachment = Attachment::query()->find($id);
+        if (! $attachment) {
+            return response()->json([
+                'message' => 'Attachment not found',
+            ], 404);
+        }
+
         if ($attachment->user_id !== Auth()->id()) {
             return response()->json([
                 'message' => 'Unauthorized',
@@ -27,15 +35,15 @@ class UploadController extends Controller
             ], 404);
         }
 
-        return response()->json([
-            'message' => 'Attachment retrieved successfully.',
-            'data' => [
-                'id' => $attachment->id,
-                'file_name' => $media->file_name,
-                'collection_name' => $attachment->collection_name,
-                'url' => $media->getFullUrl(),
-                'metadata' => $attachment->metadata,
-            ],
+        $previewPath = $media->getPath('preview') ?: $media->getPath();
+        if (! $previewPath || ! file_exists($previewPath)) {
+            return response()->json([
+                'message' => 'Preview not available.',
+            ], 404);
+        }
+
+        return response()->file($previewPath, [
+            'Content-Type' => $media->mime_type ?? 'application/octet-stream',
         ]);
     }
 
@@ -49,7 +57,7 @@ class UploadController extends Controller
         $data = $request->validated();
         $collectionName = $data['collection_name'];
         $file = $request->file('file');
-        $metadata = $data['metadata'];
+        $metadata = $data['metadata'] ?? null;
 
         DB::beginTransaction();
         try {
@@ -58,9 +66,16 @@ class UploadController extends Controller
             $attachment->metadata = $metadata;
             $attachment->collection_name = $collectionName;
             $attachment->save();
+
             $media = $attachment->addMedia($file)
+                ->usingFileName($file->getClientOriginalName())
                 ->toMediaCollection($collectionName);
+
             DB::commit();
+
+            DB::afterCommit(function () use ($attachment, $media) {
+                ConvertAttachmentToPdf::dispatch($attachment->id, $media->id);
+            });
 
             return response()->json([
                 'message' => 'File uploaded successfully.',

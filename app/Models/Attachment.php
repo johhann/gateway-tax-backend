@@ -23,15 +23,6 @@ class Attachment extends Model implements HasMedia
             ->nonQueued();
     }
 
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('documents')
-            ->acceptsMimeTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']);
-
-        $this->addMediaCollection('images')
-            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp']);
-    }
-
     public function record(): MorphTo
     {
         return $this->morphTo();
