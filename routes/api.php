@@ -87,13 +87,27 @@ Route::prefix('v1')->group(function () {
     });
 
     Route::middleware(['auth:sanctum', 'ability:access-token'])->group(function () {
+        /**
+         * Uploads
+         */
         Route::post('upload', [UploadController::class, 'store']);
         Route::delete('upload/{attachment}', [UploadController::class, 'destroy']);
         Route::get('/image/{attachment}', [UploadController::class, 'show']);
+
         Route::get('cities', [LegalCityController::class, '__invoke']);
         Route::get('tax-stations', [TaxStationController::class, '__invoke']);
         Route::get('summary/{id}', [SummaryController::class, '__invoke']);
         Route::get('progress/{id}', [ProgressController::class, '__invoke']);
+
+        /**
+         * Profiles
+         */
+        Route::get('profiles', [ProfileController::class, 'index']);
+
+        /**
+         * Tax Requests
+         */
+        Route::get('tax-requests', [TaxRequestController::class, 'index']);
         Route::post('tax-request', [TaxRequestController::class, 'store']);
 
         /**

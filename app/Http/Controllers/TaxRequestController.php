@@ -16,7 +16,9 @@ class TaxRequestController extends Controller
      */
     public function index()
     {
-        //
+        $taxRequests = TaxRequest::where('user_id', Auth::id())->get();
+
+        return TaxRequestResource::collection($taxRequests);
     }
 
     /**

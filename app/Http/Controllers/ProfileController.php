@@ -11,6 +11,21 @@ use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
+    public function index()
+    {
+        $profiles = Profile::query()->where('user_id', Auth::id())->with([
+            'address',
+            'business',
+            'legal',
+            'dependants',
+            'identification',
+            'payment',
+        ])->get();
+
+        return ProfileResource::collection($profiles);
+
+    }
+
     /**
      * Store a newly created resource in storage.
      */

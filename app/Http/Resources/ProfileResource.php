@@ -26,6 +26,12 @@ class ProfileResource extends JsonResource
             'hear_from' => $this->resource->hear_from,
             'occupation' => $this->resource->occupation,
             'self_employment_income' => (bool) $this->resource->self_employment_income,
+            'address' => new AddressResource($this->whenLoaded('address')),
+            'business' => new BusinessResource($this->whenLoaded('business')),
+            'legal' => new LegalResource($this->whenLoaded('legal')),
+            'dependants' => DepandantResource::collection($this->whenLoaded('dependants')),
+            'identification' => new IdentificationResource($this->whenLoaded('identification')),
+            'payment' => new PaymentResource($this->whenLoaded('payment')),
         ];
     }
 }
