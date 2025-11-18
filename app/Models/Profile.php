@@ -22,7 +22,7 @@ class Profile extends Model
     protected $appends = ['name'];
 
     protected $casts = [
-        'publish_status' => ProfileProgressStatus::class,
+        'progress_status' => ProfileProgressStatus::class,
         'user_status' => ProfileUserStatus::class,
         'date_of_birth' => 'datetime',
     ];

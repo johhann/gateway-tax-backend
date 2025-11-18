@@ -23,6 +23,7 @@ class SchedulesTable
                     ->searchable(),
                 TextColumn::make('branch.name')
                     ->placeholder('-')
+                    ->limit(20)
                     ->searchable(),
                 TextColumn::make('scheduled_start_time')
                     ->dateTime('M d, Y h:s A')

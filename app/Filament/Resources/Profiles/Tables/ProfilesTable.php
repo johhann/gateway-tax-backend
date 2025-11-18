@@ -61,7 +61,7 @@ class ProfilesTable
                 TextColumn::make('progress_status')
                     ->badge()
                     ->color(
-                        fn ($state) => ProfileProgressStatus::from($state)->color()
+                        fn ($record) => ProfileProgressStatus::from($record->progress_status->value)->color()
                     ),
                 TextColumn::make('user_status')
                     ->color(fn ($record) => $record->user_status->color()),

@@ -34,4 +34,16 @@ enum ProfileProgressStatus: string
             self::COMPLETED => 'success',
         };
     }
+
+    public function order(): ?string
+    {
+        return match ($this) {
+            self::PENDING => 1,
+            self::PROCESSED => 2,
+            self::ASSIGNED => 3,
+            self::PAUSED => 4,
+            self::COMPLETED => 5,
+            self::CANCELLED => 6,
+        };
+    }
 }
