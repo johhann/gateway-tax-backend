@@ -16,6 +16,7 @@ class ViewProfile extends ViewRecord
             EditAction::make(),
             ProfileResource::assignBranchAction(),
             ProfileResource::assignAccountantAction(),
+            ProfileResource::changeStatus(),
             ProfileResource::submitAction(),
         ];
     }

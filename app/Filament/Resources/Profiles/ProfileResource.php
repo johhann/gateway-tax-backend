@@ -63,10 +63,32 @@ class ProfileResource extends Resource
                 ActionGroup::make([
                     self::assignBranchAction(),
                     self::assignAccountantAction(),
-                    self::markAsProcessed(),
+                    // self::markAsProcessed(),
+                    self::changeStatus(),
                 ])
                     ->icon('heroicon-o-adjustments-horizontal'),
             ], position: RecordActionsPosition::BeforeColumns);
+    }
+
+    public static function changeStatus(): Action
+    {
+        return Action::make('Update Status')
+            // ->visible(fn (Profile $record) => (auth()->user()->isOperation() || auth()->user()->isAdmin()))
+            ->slideOver()
+            ->color('warning')
+            ->icon('heroicon-o-flag')
+            ->modalWidth('sm')
+            ->schema([
+                Select::make('progress_status')
+                    ->options(ProfileProgressStatus::class)
+                    ->default(fn (Profile $record) => $record->progress_status)
+                    ->required(),
+            ])
+            ->action(function (Profile $record, array $data): void {
+                $record->update([
+                    'progress_status' => $data['progress_status'],
+                ]);
+            });
     }
 
     public static function assignBranchAction(): Action
@@ -114,6 +136,7 @@ class ProfileResource extends Resource
             ->action(function (Profile $record, array $data): void {
                 $record->update([
                     'assigned_user_id' => $data['assigned_user_id'],
+                    'progress_status' => ProfileProgressStatus::ASSIGNED,
                 ]);
             });
     }

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Profiles\Schemas;
 
 use App\Models\Profile;
-use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -26,7 +25,8 @@ class ProfileInfolist
                         Fieldset::make('Profile Processing Details')
                             ->schema([
                                 TextEntry::make('branch.name')
-                                    ->label('Assigned Branch'),
+                                    ->label('Assigned Branch')
+                                    ->placeholder('-'),
                                 TextEntry::make('assignedTo.name')
                                     ->label('Assigned To')
                                     ->placeholder('-'),
@@ -45,7 +45,7 @@ class ProfileInfolist
                                 'style' => 'background-color: #f3f4f6; @media (prefers-color-scheme: dark) { background-color: #1f2937; }',
                             ])
                             ->columns(3)
-                            ->columnSpan(6),
+                            ->columnSpanFull(),
                         Fieldset::make('Basic Information')
                             ->schema([
                                 TextEntry::make('first_name'),
@@ -65,6 +65,7 @@ class ProfileInfolist
                                 TextEntry::make('identification.license_expiration_date')
                                     ->date(),
                             ])
+                            ->grow(true)
                             ->columns(4)
                             ->columnSpanFull(),
                         Fieldset::make('Additional Information')
@@ -72,15 +73,15 @@ class ProfileInfolist
                                 TextEntry::make('zip_code'),
                                 TextEntry::make('hear_from'),
                                 TextEntry::make('occupation'),
-                                IconEntry::make('self_employment_income')
+                                TextEntry::make('self_employment_income')
                                     ->label('Self Employed')
-                                    ->boolean(),
+                                    ->state(fn (Profile $record) => $record->self_employment_income ? 'Yes' : 'No'),
                                 TextEntry::make('updated_at')
                                     ->label('Last updated at')
                                     ->dateTime('M d, Y h:i A')
                                     ->placeholder('-'),
                             ])
-                            ->columnSpan(3),
+                            ->columns(3),
                         Fieldset::make('Address')
                             ->schema([
                                 TextEntry::make('address.address'),
@@ -89,12 +90,9 @@ class ProfileInfolist
                                 TextEntry::make('address.state'),
                                 TextEntry::make('address.zip_code'),
                             ])
-                            ->columns(3)
-                            ->grow(true)
-                            ->columnSpanFull(),
+                            ->columns(3),
                     ])
                         ->columns()
-                        ->grow(true)
                         ->columnSpanFull(),
                 ])
                     ->from('md')
@@ -114,16 +112,16 @@ class ProfileInfolist
                         TextEntry::make('business.website')
                             ->url(fn ($record) => $record->business['website'])
                             ->color(Color::Blue),
-                        IconEntry::make('business.has_1099_misc')
-                            ->boolean(),
-                        IconEntry::make('business.is_license_requirement')
-                            ->boolean(),
-                        IconEntry::make('business.has_business_license')
-                            ->boolean(),
+                        TextEntry::make('business.has_1099_misc')
+                            ->state(fn (Profile $record) => $record->business->has_1099_misc ? 'Yes' : 'No'),
+                        TextEntry::make('business.is_license_requirement')
+                            ->state(fn (Profile $record) => $record->business->is_license_requirement ? 'Yes' : 'No'),
+                        TextEntry::make('business.has_business_license')
+                            ->state(fn (Profile $record) => $record->business->has_business_license ? 'Yes' : 'No'),
+                        TextEntry::make('business.file_taxed_for_tax_year')
+                            ->state(fn ($record) => $record->business->file_taxed_for_tax_year ? 'Yes' : 'No'),
                         TextEntry::make('business.description'),
                         TextEntry::make('business.business_advertisement'),
-                        IconEntry::make('business.file_taxed_for_file_year')
-                            ->boolean(),
                     ])
                     ->extraAttributes([
                         'style' => 'background-color: #fff; @media (prefers-color-scheme: dark) { background-color: #1f2937; }',
