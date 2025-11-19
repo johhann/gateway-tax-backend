@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Profiles;
 
+use App\Enums\ProfileProgressStatus;
 use App\Filament\Resources\Profiles\Pages\CreateProfile;
 use App\Filament\Resources\Profiles\Pages\EditProfile;
 use App\Filament\Resources\Profiles\Pages\ListProfiles;
@@ -17,6 +18,7 @@ use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
@@ -26,6 +28,7 @@ use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class ProfileResource extends Resource
 {
@@ -60,7 +63,9 @@ class ProfileResource extends Resource
                 ActionGroup::make([
                     self::assignBranchAction(),
                     self::assignAccountantAction(),
-                ]),
+                    self::markAsProcessed(),
+                ])
+                    ->icon('heroicon-o-adjustments-horizontal'),
             ], position: RecordActionsPosition::BeforeColumns);
     }
 
@@ -110,6 +115,71 @@ class ProfileResource extends Resource
                 $record->update([
                     'assigned_user_id' => $data['assigned_user_id'],
                 ]);
+            });
+    }
+
+    public static function markAsProcessed(): Action
+    {
+        return Action::make('Mark as Processed')
+            ->visible(fn (Profile $record) => $record->progress_status === ProfileProgressStatus::ASSIGNED)
+            ->color('danger')
+            ->icon('heroicon-o-document-text')
+            ->action(function (Profile $record, array $data): void {
+                $record->progress_status = ProfileProgressStatus::PROCESSED;
+                $record->save();
+
+                // send notification
+                Notification::make()
+                    ->title('Profile Processed')
+                    ->body('Profile with ID: '.$record->id.', has been processed completed.')
+                    ->success()
+                    ->actions([
+                        Action::make('view profile')
+                            ->button()
+                            ->url(fn () => '/profiles/'.$record->id),
+                    ])
+                    ->sendToDatabase(Auth::user())
+                    ->send();
+            });
+    }
+
+    public static function pause(): Action
+    {
+        return Action::make('Mark as Processed')
+            ->visible(fn (Profile $record) => $record->progress_status === ProfileProgressStatus::ASSIGNED)
+            ->color('danger')
+            ->icon('heroicon-o-document-text')
+            ->action(function (Profile $record, array $data): void {
+                $record->update([
+                    'assigned_user_id' => $data['assigned_user_id'],
+                ]);
+            });
+    }
+
+    public static function submitAction(): Action
+    {
+        return Action::make('Submit Profile')
+            // ->visible(fn (Profile $record) => (auth()->user()->isOperation() || auth()->user()->isAdmin() || auth()->user()->isBranchManager()) && $record->assigned_branch_id)
+            // ->slideOver()
+            ->color('primary')
+            ->icon('heroicon-o-check-badge')
+            ->modalWidth('md')
+            ->requiresConfirmation()
+            ->action(function (Profile $record, array $data): void {
+                // submit service
+
+                // send notification
+                Notification::make()
+                    ->title('Profile Submission Requested')
+                    ->body('Profile submission request for ID: '.$record->id.', is initiated. We will notify you once it is completed.')
+                    ->success()
+                    ->actions([
+                        Action::make('view profile')
+                            ->button()
+                            ->url(fn () => '/profiles/'.$record->id),
+                    ])
+                    ->sendToDatabase(Auth::user())
+                    ->send();
             });
     }
 

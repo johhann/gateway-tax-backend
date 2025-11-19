@@ -23,6 +23,29 @@ class ProfileInfolist
             ->components([
                 Flex::make([
                     Section::make([
+                        Fieldset::make('Profile Processing Details')
+                            ->schema([
+                                TextEntry::make('branch.name')
+                                    ->label('Assigned Branch'),
+                                TextEntry::make('assignedTo.name')
+                                    ->label('Assigned To')
+                                    ->placeholder('-'),
+                                TextEntry::make('progress_status')
+                                    ->state(fn (Profile $record) => $record->progress_status->label())
+                                    ->color(fn (Profile $record) => $record->progress_status->color()),
+                                TextEntry::make('user_status')
+                                    ->state(fn (Profile $record) => $record->user_status->label())
+                                    ->color(fn (Profile $record) => $record->user_status->color()),
+                                TextEntry::make('created_at')
+                                    ->label('Requested Date')
+                                    ->suffix(fn ($record) => ' ('.$record->created_at->diffForHumans().')')
+                                    ->dateTime('M d, Y h:i A'),
+                            ])
+                            ->extraAttributes([
+                                'style' => 'background-color: #f3f4f6; @media (prefers-color-scheme: dark) { background-color: #1f2937; }',
+                            ])
+                            ->columns(3)
+                            ->columnSpan(6),
                         Fieldset::make('Basic Information')
                             ->schema([
                                 TextEntry::make('first_name'),
@@ -40,11 +63,10 @@ class ProfileInfolist
                                 TextEntry::make('identification.license_issue_date')
                                     ->date(),
                                 TextEntry::make('identification.license_expiration_date')
-                                    ->date()
-                                    ->color(Color::Red),
+                                    ->date(),
                             ])
                             ->columns(4)
-                            ->columnSpan(6),
+                            ->columnSpanFull(),
                         Fieldset::make('Additional Information')
                             ->schema([
                                 TextEntry::make('zip_code'),
@@ -67,20 +89,19 @@ class ProfileInfolist
                                 TextEntry::make('address.state'),
                                 TextEntry::make('address.zip_code'),
                             ])
-                            ->columnSpan(3),
+                            ->columns(3)
+                            ->grow(true)
+                            ->columnSpanFull(),
                     ])
                         ->columns()
                         ->grow(true)
-                        ->columnSpan(4),
+                        ->columnSpanFull(),
                 ])
                     ->from('md')
                     ->columnSpanFull(),
 
                 Fieldset::make('Business')
                     ->visible(fn (Profile $record) => $record->self_employment_income)
-                    ->extraAttributes([
-                        'class' => 'bg-white rounded-xl p-4 shadow-sm border border-gray-200',
-                    ])
                     ->schema([
                         TextEntry::make('business.name'),
                         TextEntry::make('business.city'),
@@ -103,6 +124,9 @@ class ProfileInfolist
                         TextEntry::make('business.business_advertisement'),
                         IconEntry::make('business.file_taxed_for_file_year')
                             ->boolean(),
+                    ])
+                    ->extraAttributes([
+                        'style' => 'background-color: #fff; @media (prefers-color-scheme: dark) { background-color: #1f2937; }',
                     ])
                     ->columns(4)
                     ->columnSpanFull(),
@@ -142,6 +166,9 @@ class ProfileInfolist
                             ->columnSpanFull()
                             ->grow(false),
                     ])
+                    ->extraAttributes([
+                        'style' => 'background-color: #fff; @media (prefers-color-scheme: dark) { background-color: #1f2937; }',
+                    ])
                     ->columnSpanFull(),
                 RepeatableEntry::make('dependants')
                     ->visible(fn (Profile $record) => $record->legal->number_of_dependant > 0)
@@ -162,6 +189,9 @@ class ProfileInfolist
                             ->state(fn ($record) => $record->relationship),
                         TextEntry::make('dependant.occupation')
                             ->state(fn ($record) => $record->occupation),
+                    ])
+                    ->extraAttributes([
+                        'style' => 'background-color: #fff; @media (prefers-color-scheme: dark) { background-color: #1f2937; }',
                     ])
                     ->columns(3)
                     ->columnSpan(3)

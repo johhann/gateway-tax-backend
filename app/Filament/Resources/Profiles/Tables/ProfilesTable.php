@@ -28,7 +28,11 @@ class ProfilesTable
     public static function configure(Table $table, $status = null): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => $query->with('assignedTo')->orderBy('id', 'desc'))
+            ->modifyQueryUsing(
+                fn (Builder $query) => $query
+                    ->with('assignedTo')
+                    ->orderBy('id', 'desc')
+            )
             ->columns([
                 TextColumn::make('id')
                     ->sortable(),

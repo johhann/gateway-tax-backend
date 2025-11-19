@@ -33,4 +33,16 @@ enum ProfileUserStatus: string
             self::CHANGE_REQUEST => 'danger',
         };
     }
+
+    public function label(): string
+    {
+        return match ($this) {
+            self::DRAFT => 'Draft',
+            self::SUBMITTED => 'Submitted',
+            self::PROCESSING => 'Processing',
+            self::PROCESSED => 'Processed',
+            self::ACCEPTED => 'Accepted',
+            self::CHANGE_REQUEST => 'Change Requested',
+        };
+    }
 }

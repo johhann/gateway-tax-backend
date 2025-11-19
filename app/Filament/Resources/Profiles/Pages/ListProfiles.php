@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Profiles\Pages;
 
 use App\Enums\ProfileProgressStatus;
+use App\Enums\ProfileUserStatus;
 use App\Filament\Resources\Profiles\ProfileResource;
 use App\Models\Profile;
 use Filament\Actions\CreateAction;
@@ -28,7 +29,8 @@ class ListProfiles extends ListRecords
 
         $tabs = [
             'all' => Tab::make('All')
-                ->badge(fn () => Profile::count())
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereNot('user_status', ProfileUserStatus::DRAFT))
+                ->badge(fn () => Profile::query()->whereNot('user_status', ProfileUserStatus::DRAFT)->count())
                 ->badgeColor('gray'),
         ];
 
