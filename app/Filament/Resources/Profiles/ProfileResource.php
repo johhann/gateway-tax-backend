@@ -74,7 +74,7 @@ class ProfileResource extends Resource
     {
         return Action::make('Update Status')
             // ->visible(fn (Profile $record) => (auth()->user()->isOperation() || auth()->user()->isAdmin()))
-            ->slideOver()
+            // ->slideOver()
             ->color('warning')
             ->icon('heroicon-o-flag')
             ->modalWidth('sm')
@@ -82,6 +82,7 @@ class ProfileResource extends Resource
                 Select::make('progress_status')
                     ->options(ProfileProgressStatus::class)
                     ->default(fn (Profile $record) => $record->progress_status)
+                    ->native(false)
                     ->required(),
             ])
             ->action(function (Profile $record, array $data): void {
@@ -95,15 +96,16 @@ class ProfileResource extends Resource
     {
         return Action::make('Assign Branch')
             ->visible(fn (Profile $record) => (auth()->user()->isOperation() || auth()->user()->isAdmin()))
-            ->slideOver()
+            // ->slideOver()
             ->label(fn ($record) => $record->assigned_branch_id ? 'Change Branch' : 'Assign Branch')
             ->color(fn ($record) => $record->assigned_branch_id ? 'secondary' : 'primary')
             ->icon('heroicon-o-building-office')
-            ->modalWidth('sm')
+            ->modalWidth('md')
             ->schema([
                 Select::make('branch_id')
                     ->label('Branch')
                     ->options(Branch::pluck('name', 'id'))
+                    ->default(fn ($record) => $record->assigned_branch_id)
                     ->required()
                     ->searchable(),
             ])
@@ -118,11 +120,11 @@ class ProfileResource extends Resource
     {
         return Action::make('Assign Accountant')
             ->visible(fn (Profile $record) => (auth()->user()->isOperation() || auth()->user()->isAdmin() || auth()->user()->isBranchManager()) && $record->assigned_branch_id)
-            ->slideOver()
+            // ->slideOver()
             ->label(fn ($record) => $record->assigned_user_id ? 'Change Accountant' : 'Assign Accountant')
             ->color(fn ($record) => $record->assigned_user_id ? 'secondary' : 'primary')
             ->icon('heroicon-o-user')
-            ->modalWidth('sm')
+            ->modalWidth('md')
             ->schema(function (Profile $record) {
                 return [
                     Select::make('assigned_user_id')
