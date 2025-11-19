@@ -35,7 +35,10 @@ class UploadController extends Controller
             ], 404);
         }
 
-        $previewPath = $media->getPath('preview') ?: $media->getPath();
+        $previewPath = $media->hasGeneratedConversion('preview')
+            ? $media->getPath('preview')
+            : $media->getPath();
+
         if (! $previewPath || ! file_exists($previewPath)) {
             return response()->json([
                 'message' => 'Preview not available.',

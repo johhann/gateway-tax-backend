@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\CollectionName;
 use App\Http\Requests\StoreIdentificationRequest;
 use App\Http\Requests\UpdateIdentificationRequest;
 use App\Http\Resources\AddressResource;
@@ -24,9 +25,7 @@ class IdentificationController extends Controller
     {
         $validated = $request->validated();
 
-        $identification = null;
-        $address = null;
-        $profile = Profile::with('identification', 'address')->find($validated['profile_id']);
+        $profile = Profile::with(['identification', 'address'])->find($validated['profile_id']);
 
         abort_if($profile->identification, 409, 'Identification already exists.');
         abort_if($profile->address, 409, 'Address already exists.');
@@ -59,46 +58,59 @@ class IdentificationController extends Controller
         return response()->json([
             'identification' => new IdentificationResource($identification),
             'address' => new AddressResource($address),
-            'license_front_image_id' => $identification->attachments()->where('metadata', 'license_front')->pluck('id'),
-            'license_back_image_id' => $identification->attachments()->where('metadata', 'license_back')->pluck('id'),
+            'license_front_image_id' => $identification->attachments()->where('collection_name', CollectionName::IdFront)->latest()->pluck('id'),
+            'license_back_image_id' => $identification->attachments()->where('collection_name', CollectionName::IdBack)->latest()->pluck('id'),
         ], 201);
     }
 
     /**
      * Display the authenticated user's identification and address.
      */
-    public function show(Request $request, Profile $profile)
+    public function show(Request $request, $id)
     {
-        $profile->loadMissing('identification', 'address');
+        $profile = Profile::where('id', $id)->with([
+            'identification', 'address',
+        ])->first() ?? null;
+
+        if (is_null($profile)) {
+            return response()->json(['message' => 'Profile not found.'], 404);
+        }
+
         $identification = $profile->identification;
         $address = $profile->address;
 
         return response()->json([
             'identification' => $identification ? new IdentificationResource($identification) : null,
             'address' => $address ? new AddressResource($address) : null,
-            'license_front_image_id' => $identification ? $identification->attachments()->where('collection_name', 'license_front_image_id')->pluck('id') : [],
-            'license_back_image_id' => $identification ? $identification->attachments()->where('collection_name', 'license_back_image_id')->pluck('id') : [],
+            'license_front_image_id' => $identification ? $identification->attachments()->where('collection_name', CollectionName::IdFront)->latest()->pluck('id') : [],
+            'license_back_image_id' => $identification ? $identification->attachments()->where('collection_name', CollectionName::IdBack)->latest()->pluck('id') : [],
         ]);
     }
 
     /**
      * Update the authenticated user's identification and address.
+     *
+     * @throws Throwable
      */
     public function update(UpdateIdentificationRequest $request)
     {
         $validated = $request->validated();
 
-        $profile = Profile::where('id', $validated['profile_id'])->first() ?? null;
-        if (! $profile) {
+        $profile = Profile::where('id', $validated['profile_id'])->with([
+            'identification',
+            'address',
+        ])->first() ?? null;
+
+        if (is_null($profile)) {
             return response()->json(['message' => 'Profile not found.'], 404);
         }
 
-        $identification = Identification::where('profile_id', $validated['profile_id'])->latest()->first();
+        $identification = $profile->identification;
         if (! $identification) {
             return response()->json(['message' => 'Identification not found.'], 404);
         }
 
-        $address = Address::where('profile_id', $validated['profile_id'])->latest()->first();
+        $address = $profile->address;
 
         DB::transaction(function () use ($validated, $identification, &$address, $profile) {
             $identData = [];
@@ -129,13 +141,13 @@ class IdentificationController extends Controller
             }
 
             if (array_key_exists('license_front_image_id', $validated)) {
-                $frontAttachments = $identification->attachments()->where('metadata', 'license_front')->pluck('id')->toArray();
+                $frontAttachments = $identification->attachments()->where('collection_name', CollectionName::IdFront)->pluck('id')->toArray();
                 $identification->detachAttachments($frontAttachments);
                 $identification->attachAttachments($validated['license_front_image_id']);
             }
 
             if (array_key_exists('license_back_image_id', $validated)) {
-                $backAttachments = $identification->attachments()->where('metadata', 'license_back')->pluck('id')->toArray();
+                $backAttachments = $identification->attachments()->where('collection_name', CollectionName::IdBack)->pluck('id')->toArray();
                 $identification->detachAttachments($backAttachments);
                 $identification->attachAttachments($validated['license_back_image_id']);
             }
@@ -147,8 +159,8 @@ class IdentificationController extends Controller
         return response()->json([
             'identification' => new IdentificationResource($identification->refresh()),
             'address' => $address ? new AddressResource($address->refresh()) : null,
-            'license_front_image_id' => $identification->attachments()->where('metadata', 'license_front')->pluck('id'),
-            'license_back_image_id' => $identification->attachments()->where('metadata', 'license_back')->pluck('id'),
+            'license_front_image_id' => $identification->attachments()->where('collection_name', CollectionName::IdFront)->latest()->pluck('id'),
+            'license_back_image_id' => $identification->attachments()->where('collection_name', CollectionName::IdBack)->latest()->pluck('id'),
         ]);
     }
 }

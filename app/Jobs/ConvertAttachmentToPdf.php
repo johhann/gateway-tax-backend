@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Enums\CollectionName;
 use App\Models\Attachment;
 use App\Services\ImageToPdfService;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -22,7 +23,7 @@ class ConvertAttachmentToPdf implements ShouldQueue
     /**
      * @throws FileDoesNotExist
      * @throws FileIsTooBig
-     * @throws \Exception
+     * @throws Exception
      */
     public function handle(ImageToPdfService $service): void
     {

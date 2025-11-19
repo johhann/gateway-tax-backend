@@ -14,7 +14,7 @@ trait HasAttachments
         return $this->morphMany(Attachment::class, 'record');
     }
 
-    public function attachment(): MorphToMany
+    public function attachment(): MorphMany
     {
         return $this->attachments()->latest();
     }
@@ -43,6 +43,22 @@ trait HasAttachments
 
         $attachments->each(function (Attachment $attachment) {
             $attachment->record()->associate($this);
+            $attachment->save();
+        });
+    }
+
+    public function detachAttachments(array|int $attachmentIds): void
+    {
+        $ids = is_array($attachmentIds) ? $attachmentIds : [$attachmentIds];
+
+        $attachments = Attachment::query()
+            ->whereIn('id', $ids)
+            ->where('record_type', '=', static::class)
+            ->where('record_id', '=', $this->id)
+            ->get();
+
+        $attachments->each(function (Attachment $attachment) {
+            $attachment->record()->dissociate();
             $attachment->save();
         });
     }
