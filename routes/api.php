@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\BusinessController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\IdentificationController;
 use App\Http\Controllers\LegalCityController;
 use App\Http\Controllers\LegalController;
@@ -93,6 +94,10 @@ Route::prefix('v1')->group(function () {
         Route::post('upload', [UploadController::class, 'store']);
         Route::delete('upload/{attachment}', [UploadController::class, 'destroy']);
         Route::get('/image/{attachment}', [UploadController::class, 'show']);
+
+        Route::post('documents', [DocumentController::class, 'store']);
+        Route::get('documents/{id}', [DocumentController::class, 'show']);
+        Route::put('documents/{document}', [DocumentController::class, 'update']);
 
         Route::get('cities', [LegalCityController::class, '__invoke']);
         Route::get('tax-stations', [TaxStationController::class, '__invoke']);

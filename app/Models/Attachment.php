@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CollectionName;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -14,6 +15,13 @@ class Attachment extends Model implements HasMedia
 {
     use InteractsWithMedia;
     use SoftDeletes;
+
+    protected function casts(): array
+    {
+        return [
+            'collection_name' => CollectionName::class,
+        ];
+    }
 
     public function registerMediaConversions(?Media $media = null): void
     {

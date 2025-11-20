@@ -4,6 +4,8 @@ namespace App\Jobs;
 
 use App\Enums\CollectionName;
 use App\Models\Attachment;
+use App\Models\Document;
+use App\Models\Identification;
 use App\Services\ImageToPdfService;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -18,7 +20,7 @@ class ConvertAttachmentToPdf implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(public int $attachmentId, public int $mediaId) {}
+    public function __construct(public int $profileId) {}
 
     /**
      * @throws FileDoesNotExist
@@ -27,36 +29,56 @@ class ConvertAttachmentToPdf implements ShouldQueue
      */
     public function handle(ImageToPdfService $service): void
     {
-        $attachment = Attachment::query()->find($this->attachmentId);
-        if (! $attachment) {
-            return;
+        $attachments = collect();
+
+        $document = Document::where('profile_id', $this->profileId)->first();
+        if ($document) {
+            foreach (['w2_id', 'misc_1099_id', 'shared_riders_id', 'mortgage_statement_id', 'tuition_statement_id', 'misc_id'] as $field) {
+                $id = $document->{$field};
+                if ($id) {
+                    $att = Attachment::find($id);
+                    if ($att) {
+                        $attachments->push($att);
+                    }
+                }
+            }
         }
 
-        $media = $attachment->media()->where('id', $this->mediaId)->first();
-        if (! $media) {
-            return;
+        $identification = Identification::where('profile_id', $this->profileId)->first();
+        if ($identification) {
+            $identification->load('attachments');
+            $identification->attachments->each(function (Attachment $a) use ($attachments) {
+                $attachments->push($a);
+            });
         }
 
-        $sourcePath = $media->getPath();
-        if (! $sourcePath || ! is_file($sourcePath)) {
-            return;
-        }
+        $attachments = $attachments->unique('id')->values();
 
-        $baseName = pathinfo($media->file_name, PATHINFO_FILENAME);
+        foreach ($attachments as $attachment) {
+            $medias = $attachment->getMedia();
+            foreach ($medias as $media) {
+                $sourcePath = $media->getPath();
+                if (! $sourcePath || ! is_file($sourcePath)) {
+                    continue;
+                }
 
-        $tmpBase = tempnam(sys_get_temp_dir(), 'pdf_');
-        @unlink($tmpBase);
-        $tmpPdf = $tmpBase.'.pdf';
+                $baseName = pathinfo($media->file_name, PATHINFO_FILENAME);
 
-        $service->convertToPdf($sourcePath, $tmpPdf, 3 * 1024 * 1024);
+                $tmpBase = tempnam(sys_get_temp_dir(), 'pdf_');
+                @unlink($tmpBase);
+                $tmpPdf = $tmpBase.'.pdf';
 
-        if (is_file($tmpPdf)) {
-            $attachment
-                ->addMedia($tmpPdf)
-                ->usingFileName($baseName.'.pdf')
-                ->toMediaCollection(CollectionName::PDFAttachments->value);
+                $service->convertToPdf($sourcePath, $tmpPdf, 3 * 1024 * 1024);
 
-            @unlink($tmpPdf);
+                if (is_file($tmpPdf)) {
+                    $attachment
+                        ->addMedia($tmpPdf)
+                        ->usingFileName($baseName.'.pdf')
+                        ->toMediaCollection(CollectionName::PDFAttachments->value);
+
+                    @unlink($tmpPdf);
+                }
+            }
         }
     }
 }
