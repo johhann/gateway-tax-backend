@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Support\Facades\Auth;
 
-class TaxRequestScope implements Scope
+class ScheduleScope implements Scope
 {
     /**
      * Apply the scope to a given Eloquent query builder.
@@ -20,7 +20,7 @@ class TaxRequestScope implements Scope
         if ($user->isBranchManager()) {
             $builder
                 ->where('assigned_user_id', $user->id)
-                ->orWhereRelation('assignedTo', 'id', $user->branch_id);
+                ->orWhereRelation('branch', 'id', $user->branch_id);
         }
 
         if ($user->isUser()) {

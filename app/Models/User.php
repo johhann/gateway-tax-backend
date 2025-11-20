@@ -106,8 +106,18 @@ class User extends Authenticatable implements HasMedia
         return $this->first_name.' '.$this->last_name;
     }
 
+    public function scopeActive($query)
+    {
+        return $query->where('status', true);
+    }
+
     public function scopeAccountant($query)
     {
         return $query->where('role', UserRole::ACCOUNTANT);
+    }
+
+    public function scopeBranchManager($query)
+    {
+        return $query->where('role', UserRole::BRANCH_MANAGER);
     }
 }

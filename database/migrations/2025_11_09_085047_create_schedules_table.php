@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('branch_id')->nullable()->constrained('branches');
+            $table->foreignId('assigned_user_id')->nullable()->constrained('users');
             $table->timestampTz('scheduled_start_time');
             $table->timestampTz('scheduled_end_time');
             $table->string('type');

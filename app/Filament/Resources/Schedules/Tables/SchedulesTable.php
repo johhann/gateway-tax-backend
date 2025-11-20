@@ -17,12 +17,13 @@ class SchedulesTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn ($query) => $query->with('user'))
+            ->modifyQueryUsing(fn ($query) => $query->with('user', 'assignedTo'))
             ->columns([
                 TextColumn::make('user.name')
                     ->searchable(),
                 TextColumn::make('branch.name')
                     ->placeholder('-')
+                    ->description(fn ($record) => $record->assignedTo?->name)
                     ->limit(20)
                     ->searchable(),
                 TextColumn::make('scheduled_start_time')
@@ -43,14 +44,14 @@ class SchedulesTable
             ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make(),
+                // EditAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
-                ]),
+                // BulkActionGroup::make([
+                //     DeleteBulkAction::make(),
+                //     ForceDeleteBulkAction::make(),
+                //     RestoreBulkAction::make(),
+                // ]),
             ]);
     }
 }

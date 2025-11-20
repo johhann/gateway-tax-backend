@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\UserRole;
+use App\Models\Branch;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -13,7 +14,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-
+        $branches = Branch::pluck('id');
         User::factory()->create([
             'first_name' => fake()->firstName(),
             'last_name' => fake()->lastName(),
@@ -38,6 +39,7 @@ class UserSeeder extends Seeder
             'email' => 'branch_manager@gateway.com',
             'role' => UserRole::BRANCH_MANAGER,
             'password' => bcrypt('password'),
+            'branch_id' => $branch = $branches->random(),
         ]);
 
         User::factory()->create([
@@ -46,6 +48,7 @@ class UserSeeder extends Seeder
             'email' => 'accountant@gateway.com',
             'role' => UserRole::ACCOUNTANT,
             'password' => bcrypt('password'),
+            'branch_id' => $branch,
         ]);
 
         User::factory()->create([
@@ -54,7 +57,6 @@ class UserSeeder extends Seeder
             'email' => 'user@gateway.com',
             'role' => UserRole::USER,
             'password' => bcrypt('password'),
-            'branch_id' => null,
         ]);
 
         User::factory(10)->create(['role' => UserRole::BRANCH_MANAGER]);

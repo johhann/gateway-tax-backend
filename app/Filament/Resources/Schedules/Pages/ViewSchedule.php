@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Schedules\Pages;
 
 use App\Filament\Resources\Schedules\ScheduleResource;
-use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewSchedule extends ViewRecord
@@ -13,7 +12,7 @@ class ViewSchedule extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            EditAction::make(),
+            ScheduleResource::assignBranchAction(),
         ];
     }
 }

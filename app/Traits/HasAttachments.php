@@ -4,7 +4,6 @@ namespace App\Traits;
 
 use App\Models\Attachment;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Validation\ValidationException;
 
 trait HasAttachments
