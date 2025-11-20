@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAttachmentRequest;
-use App\Jobs\ConvertAttachmentToPdf;
 use App\Models\Attachment;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -27,7 +26,7 @@ class UploadController extends Controller
         }
 
         $media = $attachment->getFirstMedia(
-            $attachment->collection_name
+            $attachment->collection_name->value
         );
         if (! $media) {
             return response()->json([
@@ -75,10 +74,6 @@ class UploadController extends Controller
                 ->toMediaCollection($collectionName);
 
             DB::commit();
-
-            DB::afterCommit(function () use ($attachment, $media) {
-                ConvertAttachmentToPdf::dispatch($attachment->id, $media->id);
-            });
 
             return response()->json([
                 'message' => 'File uploaded successfully.',
