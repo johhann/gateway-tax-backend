@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GoogleRequest;
 use App\Models\User;
@@ -37,12 +38,21 @@ class SocialiteController extends Controller
         $data = Crypt::decryptString($token);
         abort_if($userAgent != $data, 403, 'Socialite token is invalid. Please try again.');
 
+        // separate first and last name by space
+        $name = explode(' ', $request->name);
+        $request->merge([
+            'first_name' => $name[0],
+            'last_name' => $name[1] ?? null,
+        ]);
+
         $user = User::firstOrCreate([
             'email' => $request->email,
         ], [
             'google_id' => $request->sub,
-            'name' => $request->name,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
             'email_verified_at' => now(),
+            'role' => UserRole::USER,
             'status' => true,
         ]);
 
