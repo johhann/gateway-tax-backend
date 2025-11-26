@@ -52,6 +52,7 @@ Route::prefix('v1')->group(function () {
                     Route::get('profile', [UserController::class, 'profile'])->name('users.profile');
                     Route::delete('logout', [AuthController::class, 'logout'])->name('logout');
                     Route::post('change-password', [NewPasswordController::class, 'handle']);
+                    Route::patch('users', [UserController::class, 'update']);
                 });
         });
 
