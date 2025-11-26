@@ -40,7 +40,7 @@ class UserController extends Controller
             $user->addMediaFromRequest('avatar')->toMediaCollection('user-avatar');
         }
 
-        return $user;
+        return $user->refresh();
     }
 
     public function destroy(User $user)
