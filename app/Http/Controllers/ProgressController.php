@@ -24,6 +24,38 @@ class ProgressController extends Controller
             ]);
         }
 
+        return $this->handle($profile);
+    }
+
+    public function latestProfileProgress()
+    {
+        $profile = Profile::with(['identification', 'business', 'legal', 'payment'])
+            ->latest()
+            ->first();
+
+        if (! $profile) {
+            return new ProgressResource([
+                'percent' => 0,
+                'last_saved_step' => null,
+            ]);
+        }
+
+        return $this->handle($profile);
+    }
+
+    public function handle(Profile $profile)
+    {
+        $profile = Profile::with(['identification', 'business', 'legal', 'payment'])
+            ->where('id', $id)
+            ->first();
+
+        if (! $profile) {
+            return new ProgressResource([
+                'percent' => 0,
+                'last_saved_step' => null,
+            ]);
+        }
+
         $steps = [
             'stepOne' => true,
             'stepTwo' => true,

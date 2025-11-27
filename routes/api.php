@@ -105,6 +105,7 @@ Route::prefix('v1')->group(function () {
         Route::get('tax-stations', [TaxStationController::class, '__invoke']);
         Route::get('summary/{id}', [SummaryController::class, '__invoke']);
         Route::get('progress/{id}', [ProgressController::class, '__invoke']);
+        Route::get('progress-latest', [ProgressController::class, 'latestProfileProgress']);
 
         /**
          * Profiles
