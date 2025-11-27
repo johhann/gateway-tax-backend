@@ -7,23 +7,26 @@ use App\Http\Requests\StoreProfileRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Resources\ProfileResource;
 use App\Models\Profile;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
     public function index()
     {
-        $profiles = Profile::query()->where('user_id', Auth::id())->with([
-            'address',
-            'business',
-            'legal',
-            'dependants',
-            'identification',
-            'payment',
-        ])->get();
+        $profiles = Profile::query()
+            ->withoutGlobalScopes()
+            ->where('user_id', Auth::id())
+            ->with([
+                'address',
+                'business',
+                'legal',
+                'dependants',
+                'identification',
+                'payment',
+            ])->get();
 
         return ProfileResource::collection($profiles);
-
     }
 
     /**
@@ -43,7 +46,12 @@ class ProfileController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show()
+    public function show(Request $request, Profile $profile)
+    {
+        return new ProfileResource($profile);
+    }
+
+    public function latest()
     {
         $profile = Profile::query()->where('user_id', Auth::id())
             ->latest()->first();

@@ -58,7 +58,8 @@ Route::prefix('v1')->group(function () {
 
     // STEP ONE
     Route::prefix('stepOne')->middleware(['auth:sanctum', 'ability:access-token'])->group(function () {
-        Route::get('profile', [ProfileController::class, 'show']);
+        Route::get('profile/{profile}', [ProfileController::class, 'show']);
+        Route::get('profile-latest', [ProfileController::class, 'latest']);
         Route::post('profile', [ProfileController::class, 'store']);
         Route::put('profile', [ProfileController::class, 'update']);
     });
