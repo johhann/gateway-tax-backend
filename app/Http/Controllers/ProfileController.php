@@ -46,8 +46,16 @@ class ProfileController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, Profile $profile)
+    public function show(Request $request, $id)
     {
+        $profile = Profile::query()->where('user_id', Auth::id())
+            ->where('id', $id)
+            ->first();
+
+        if (! $profile) {
+            return response()->json(['message' => 'Profile not found'], 404);
+        }
+
         return new ProfileResource($profile);
     }
 
