@@ -120,4 +120,9 @@ class User extends Authenticatable implements HasMedia
     {
         return $query->where('role', UserRole::BRANCH_MANAGER);
     }
+
+    public function routeNotificationForFcm()
+    {
+        return $this->fcm_token;
+    }
 }
