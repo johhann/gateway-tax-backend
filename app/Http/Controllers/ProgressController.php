@@ -45,10 +45,6 @@ class ProgressController extends Controller
 
     public function handle(Profile $profile)
     {
-        $profile = Profile::with(['identification', 'business', 'legal', 'payment'])
-            ->where('id', $id)
-            ->first();
-
         if (! $profile) {
             return new ProgressResource([
                 'percent' => 0,
