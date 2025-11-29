@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\ProfileProgressStatus;
 use App\Enums\ProfileUserStatus;
 use App\Models\Scopes\ProfileScope;
+use App\Traits\HasAttachments;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[ScopedBy(ProfileScope::class)]
 class Profile extends Model
 {
+    use HasAttachments;
     use HasFactory;
     use SoftDeletes;
 

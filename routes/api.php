@@ -15,6 +15,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProgressController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SummaryController;
 use App\Http\Controllers\TaxRequestController;
@@ -129,6 +130,8 @@ Route::prefix('v1')->group(function () {
         Route::put('schedule/{schedule}', [ScheduleController::class, 'update']);
 
         Route::post('fcm-token', [FcmController::class, '__invoke']);
+
+        Route::post('submit/{id}', [ProfileController::class, 'submitProfile']);
     });
 
     /**
@@ -141,4 +144,6 @@ Route::prefix('v1')->group(function () {
             Route::get('notifications-mark-all-read', [NotificationController::class, 'markAllRead']);
             Route::get('notifications/{notification}/mark-as-read', [NotificationController::class, 'markAsRead']);
         });
+
+    Route::get('review/{id}', [ReviewController::class, '__invoke']);
 });

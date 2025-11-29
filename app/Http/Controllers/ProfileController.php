@@ -6,6 +6,7 @@ use App\Enums\ProfileUserStatus;
 use App\Http\Requests\StoreProfileRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Resources\ProfileResource;
+use App\Jobs\ConvertAttachmentToPdf;
 use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -84,6 +85,28 @@ class ProfileController extends Controller
         }
 
         $profile->update($request->validated());
+
+        return new ProfileResource($profile);
+    }
+
+    public function submitProfile($id)
+    {
+        $profile = Profile::query()->where('user_id', Auth::id())
+            ->where('id', $id)
+            ->first();
+
+        if (! $profile) {
+            return response()->json(['message' => 'Profile not found'], 404);
+        }
+
+        if ($profile->user_status === ProfileUserStatus::SUBMITTED) {
+            return response()->json(['message' => 'Profile already submitted'], 400);
+        }
+
+        $profile->user_status = ProfileUserStatus::SUBMITTED;
+        $profile->save();
+
+        ConvertAttachmentToPdf::dispatch($profile->id);
 
         return new ProfileResource($profile);
     }

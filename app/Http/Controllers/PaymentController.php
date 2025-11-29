@@ -58,6 +58,8 @@ class PaymentController extends Controller
 
         $payment->fill($data);
         if ($checkAttachment) {
+            $prevAttachments = $payment->attachments()->pluck('id')->toArray();
+            $payment->detachAttachments($prevAttachments);
             $payment->attachAttachments($checkAttachment);
         }
 

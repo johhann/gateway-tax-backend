@@ -6,6 +6,8 @@ use App\Enums\CollectionName;
 use App\Models\Attachment;
 use App\Models\Document;
 use App\Models\Identification;
+use App\Models\Payment;
+use App\Models\Profile;
 use App\Services\ImageToPdfService;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -52,10 +54,19 @@ class ConvertAttachmentToPdf implements ShouldQueue
             });
         }
 
+        $payment = Payment::where('profile_id', $this->profileId)->first();
+        if ($payment) {
+            $payment->load('attachments');
+            $payment->attachments->each(function (Attachment $a) use ($attachments) {
+                $attachments->push($a);
+            });
+        }
+
         $attachments = $attachments->unique('id')->values();
 
+        /** @var Attachment $attachment */
         foreach ($attachments as $attachment) {
-            $medias = $attachment->getMedia();
+            $medias = $attachment->getMedia($attachment->collection_name->value);
             foreach ($medias as $media) {
                 $sourcePath = $media->getPath();
                 if (! $sourcePath || ! is_file($sourcePath)) {
@@ -71,11 +82,21 @@ class ConvertAttachmentToPdf implements ShouldQueue
                 $service->convertToPdf($sourcePath, $tmpPdf, 3 * 1024 * 1024);
 
                 if (is_file($tmpPdf)) {
-                    $attachment
+                    $pdfAttachment = new Attachment;
+                    $pdfAttachment->record_type = Profile::class;
+                    $pdfAttachment->record_id = $this->profileId;
+                    $pdfAttachment->user_id = $attachment->user_id;
+                    $pdfAttachment->collection_name = CollectionName::PDFAttachments->value;
+                    $pdfAttachment->save();
+
+                    $pdfAttachment
                         ->addMedia($tmpPdf)
                         ->usingFileName($baseName.'.pdf')
+                        ->withCustomProperties([
+                            'source_media_id' => $media->id,
+                            'source_attachment_id' => $attachment->id,
+                        ])
                         ->toMediaCollection(CollectionName::PDFAttachments->value);
-
                     @unlink($tmpPdf);
                 }
             }
