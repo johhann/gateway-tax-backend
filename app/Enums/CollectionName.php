@@ -13,5 +13,6 @@ enum CollectionName: string
     case MortgageStatement = 'mortgage_statement';
     case TuitionStatement = 'tuition_statement';
     case Misc = 'misc';
+    case Check = 'check';
     case PDFAttachments = 'pdf_attachments';
 }

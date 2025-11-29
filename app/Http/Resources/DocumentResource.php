@@ -17,12 +17,12 @@ class DocumentResource extends JsonResource
         return [
             'id' => $this->resource->id,
             'profile_id' => $this->resource->profile_id,
-            'w2_id' => $this->resource->w2_id,
-            'misc_1099_id' => $this->resource->misc_1099_id,
-            'mortgage_statement_id' => $this->resource->mortgage_statement_id,
-            'tuition_statement_id' => $this->resource->tuition_statement_id,
-            'shared_riders_id' => $this->resource->shared_riders_id,
-            'misc_id' => $this->resource->misc_id,
+            'w2_id' => $this->whenNotNull($this->resource->w2_id),
+            'misc_1099_id' => $this->whenNotNull($this->resource->misc_1099_id),
+            'mortgage_statement_id' => $this->whenNotNull($this->resource->mortgage_statement_id),
+            'tuition_statement_id' => $this->whenNotNull($this->resource->tuition_statement_id),
+            'shared_riders_id' => $this->whenNotNull($this->resource->shared_riders_id),
+            'misc_id' => $this->whenNotNull($this->resource->misc_id),
         ];
     }
 }

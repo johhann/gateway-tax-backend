@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\CollectionName;
 use App\Enums\DirectDepositAccountType;
 use App\Enums\RefundFee;
 use App\Enums\RefundMethod;
@@ -45,7 +46,9 @@ class StorePaymentRequest extends FormRequest
             'direct_deposit_info.routing_number' => ['required_with:direct_deposit_info', 'string'],
             'direct_deposit_info.account_number' => ['required_with:direct_deposit_info', 'string'],
             'direct_deposit_info.branch_code' => ['nullable', 'string'],
-            'direct_deposit_info.check_id' => ['required_with:direct_deposit_info', 'exists:attachments,id'],
+            'direct_deposit_info.check_id' => ['required_with:direct_deposit_info', Rule::exists('attachments', 'id')->where(function ($query) {
+                $query->where('collection_name', CollectionName::Check);
+            })],
 
             'refund_fee' => ['required_without_all:type,refund_method', 'string', Rule::in(RefundFee::values())],
             'profile_id' => ['required', 'exists:profiles,id'],

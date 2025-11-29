@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\FcmController;
 use App\Http\Controllers\IdentificationController;
 use App\Http\Controllers\LegalCityController;
 use App\Http\Controllers\LegalController;
@@ -126,6 +127,8 @@ Route::prefix('v1')->group(function () {
         Route::get('schedules', [ScheduleController::class, 'index']);
         Route::post('schedule', [ScheduleController::class, 'store']);
         Route::put('schedule/{schedule}', [ScheduleController::class, 'update']);
+
+        Route::post('fcm-token', [FcmController::class, '__invoke']);
     });
 
     /**

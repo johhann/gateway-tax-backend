@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Enums\CollectionName;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -31,10 +32,10 @@ class SummaryResource extends JsonResource
             'license_issue_date' => $this->whenNotNull('identification.license_issue_date'),
             'license_expiration_date' => $this->whenNotNull('identification.license_expiration_date'),
             'license_front_image_id' => $this->whenLoaded('identification', function () {
-                return $this->identification->attachments()->where('metadata', 'license_front')->pluck('id');
+                return $this->identification->attachments()->where('collection_name', CollectionName::IdFront)->latest()->pluck('id');
             }),
             'license_back_image_id' => $this->whenLoaded('identification', function () {
-                return $this->identification->attachments()->where('metadata', 'license_back')->pluck('id');
+                return $this->identification->attachments()->where('collection_name', CollectionName::IdBack)->latest()->pluck('id');
             }),
             'tax_station' => $this->whenNotNull('taxStation.name'),
             'legal_location' => $this->whenNotNull('legal.location.title'),
@@ -43,7 +44,12 @@ class SummaryResource extends JsonResource
             'occupation' => $this->occupation,
             'number_of_dependant' => $this->whenNotNull('legal.number_of_dependant'),
             'dependants' => DepandantResource::collection($this->whenLoaded('dependants')),
-            'payment' => PaymentResource::collection($this->whenLoaded('payments')),
+            'payment' => $this->whenLoaded('payment', function () {
+                return new PaymentResource($this->payment);
+            }),
+            'documents' => $this->whenLoaded('documents', function () {
+                return new DocumentResource($this->documents);
+            }),
         ];
     }
 }

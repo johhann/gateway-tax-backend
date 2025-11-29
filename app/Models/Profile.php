@@ -77,6 +77,11 @@ class Profile extends Model
         return $this->hasMany(TaxRequest::class);
     }
 
+    public function documents(): HasOne
+    {
+        return $this->hasOne(Document::class);
+    }
+
     public function assignedTo(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_user_id');
