@@ -24,7 +24,7 @@ class PaymentController extends Controller
         );
         $payment->attachAttachments($checkAttachment);
 
-        return (new PaymentResource($payment))->response()->setStatusCode(201);
+        return (new PaymentResource($payment->load(['attachment'])))->response()->setStatusCode(201);
     }
 
     /**
@@ -32,13 +32,13 @@ class PaymentController extends Controller
      */
     public function show($id)
     {
-        $payment = Payment::where('id', $id)->first();
+        $payment = Payment::where('profile_id', $id)->first();
 
         if (! $payment) {
             return response()->json(['message' => 'Payment not found'], 404);
         }
 
-        return new PaymentResource($payment);
+        return new PaymentResource($payment->load(['attachment']));
     }
 
     /**
@@ -65,6 +65,6 @@ class PaymentController extends Controller
 
         $payment->save();
 
-        return new PaymentResource($payment);
+        return new PaymentResource($payment->load(['attachment']));
     }
 }

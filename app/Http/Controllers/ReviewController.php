@@ -15,6 +15,7 @@ class ReviewController extends Controller
     public function __invoke(Request $request, $id)
     {
         $profile = Profile::withoutGlobalScope(ProfileScope::class)->get()->where('id', $id)
+            ->load(['legal', 'legal.branch', 'dependants', 'payment', 'taxStation', 'identification', 'address', 'documents'])
             ->first();
 
         if (! $profile) {
@@ -37,6 +38,9 @@ class ReviewController extends Controller
             }
         }
 
-        return response()->json(['pdfs' => $pdfs]);
+        return response()->json([
+            'profile' => $profile,
+            'pdfs' => $pdfs,
+        ]);
     }
 }
