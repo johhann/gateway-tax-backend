@@ -28,7 +28,7 @@ enum ProfileProgressStatus: string
         return match ($this) {
             self::PENDING => 'warning',
             self::ASSIGNED => 'info',
-            self::PROCESSED => 'success',
+            self::PROCESSED => 'blue',
             self::PAUSED => 'warning',
             self::CANCELLED => 'danger',
             self::COMPLETED => 'success',

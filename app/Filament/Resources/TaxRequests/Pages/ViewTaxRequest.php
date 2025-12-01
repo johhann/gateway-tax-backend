@@ -15,6 +15,10 @@ class ViewTaxRequest extends ViewRecord
         return [
             EditAction::make(),
             TaxRequestResource::assignUserAction(),
+            TaxRequestResource::uploadFileAction(),
+            TaxRequestResource::changeStatus(),
+            TaxRequestResource::markAsReadyForPickup(),
+            TaxRequestResource::markAsCompleted(),
         ];
     }
 }

@@ -8,10 +8,13 @@ use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 #[ScopedBy(TaxRequestScope::class)]
-class TaxRequest extends Model
+class TaxRequest extends Model implements HasMedia
 {
+    use InteractsWithMedia;
     use SoftDeletes;
 
     protected function casts(): array

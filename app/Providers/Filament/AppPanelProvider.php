@@ -2,6 +2,11 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Widgets\BookingsPerLocationChart;
+use App\Filament\Widgets\LastFiveProfilesTable;
+use App\Filament\Widgets\PriorYearTaxRequests;
+use App\Filament\Widgets\ProfilesPerStatusLineChart;
+use App\Filament\Widgets\UserStatsWidget;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -10,7 +15,6 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentView;
-use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -49,7 +53,13 @@ class AppPanelProvider extends PanelProvider
             ->databaseNotificationsPolling('30s')
             ->profile(isSimple: false)
             // ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
-            ->widgets([])
+            ->widgets([
+                UserStatsWidget::class,
+                BookingsPerLocationChart::class,
+                PriorYearTaxRequests::class,
+                ProfilesPerStatusLineChart::class,
+                LastFiveProfilesTable::class,
+            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

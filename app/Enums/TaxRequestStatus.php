@@ -18,7 +18,7 @@ enum TaxRequestStatus: string
         return match ($this) {
             self::Pending => 'secondary',
             self::Processing => 'warning',
-            self::Processed => 'success',
+            self::Processed => 'blue',
             self::ReadyForPickup => 'info',
             self::Canceled => 'danger',
             self::Completed => 'success',
