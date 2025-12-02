@@ -47,6 +47,10 @@ class ScheduleController extends Controller
     {
         $schedule = Schedule::query()->latest()->first();
 
+        if (! $schedule) {
+            return response()->json(['message' => 'Schedule not found'], 404);
+        }
+
         return new ScheduleResource($schedule);
     }
 
