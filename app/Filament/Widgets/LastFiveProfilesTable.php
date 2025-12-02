@@ -6,6 +6,7 @@ use App\Enums\ProfileProgressStatus;
 use App\Enums\ProfileUserStatus;
 use App\Models\Profile;
 use Filament\Actions\Action;
+use Filament\Actions\ViewAction;
 use Filament\Support\Colors\Color;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -21,7 +22,13 @@ class LastFiveProfilesTable extends TableWidget
     public function table(Table $table): Table
     {
         return $table
-            ->query(fn (): Builder => Profile::query()->with('assignedTo')->whereNot('status', ProfileUserStatus::DRAFT)->orderBy('created_at', 'desc')->limit(5))
+            ->query(
+                fn (): Builder => Profile::query()
+                    ->with('assignedTo')
+                    ->whereNot('user_status', ProfileUserStatus::DRAFT)
+                    ->orderBy('created_at', 'desc')
+                    ->limit(5)
+            )
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('id'),
@@ -57,7 +64,8 @@ class LastFiveProfilesTable extends TableWidget
                     ->url(fn (): string => '/profiles'),
             ])
             ->recordActions([
-                //
+                ViewAction::make('View')
+                    ->url(fn ($record): string => '/profiles/'.$record->id),
             ])
             ->paginated(false);
     }
