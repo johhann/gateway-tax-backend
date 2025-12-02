@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Enums\ProfileProgressStatus;
+use App\Enums\ProfileUserStatus;
 use App\Models\Profile;
 use Filament\Actions\Action;
 use Filament\Support\Colors\Color;
@@ -20,7 +21,7 @@ class LastFiveProfilesTable extends TableWidget
     public function table(Table $table): Table
     {
         return $table
-            ->query(fn (): Builder => Profile::query()->with('assignedTo')->orderBy('created_at', 'desc')->limit(5))
+            ->query(fn (): Builder => Profile::query()->with('assignedTo')->whereNot('status', ProfileUserStatus::DRAFT))
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('id'),
