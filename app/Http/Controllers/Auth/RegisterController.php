@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\UserAgentEnum;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\GoogleRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
 use App\Services\UserTokenService;
 use App\Services\UserVerificationService;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class RegisterController extends Controller
 {
@@ -28,6 +31,7 @@ class RegisterController extends Controller
             'phone' => $request->phone,
             'role' => UserRole::USER,
             'password' => Hash::make($request->password),
+            'user_agent' => self::detectDevice($request),
             'status' => true,
         ]);
 
@@ -42,5 +46,20 @@ class RegisterController extends Controller
             'message' => 'Please check your email to verify your account.',
             'token' => UserTokenService::getVerificationToken($user),
         ];
+    }
+
+    public static function detectDevice(StoreUserRequest|GoogleRequest $request): UserAgentEnum
+    {
+        $agent = $request->userAgent() ?? '';
+
+        if (Str::contains($agent, ['iPhone', 'iPad', 'iOS', 'Mac OS'])) {
+            return UserAgentEnum::IOS;
+        }
+
+        if (Str::contains($agent, ['Android'])) {
+            return UserAgentEnum::Android;
+        }
+
+        return UserAgentEnum::Web;
     }
 }

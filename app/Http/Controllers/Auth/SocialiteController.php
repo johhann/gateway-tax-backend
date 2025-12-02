@@ -53,6 +53,7 @@ class SocialiteController extends Controller
             'last_name' => $request->last_name,
             'email_verified_at' => now(),
             'role' => UserRole::USER,
+            'user_agent' => RegisterController::detectDevice($request),
             'status' => true,
         ]);
 

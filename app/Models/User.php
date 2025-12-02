@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Enums\UserAgentEnum;
 use App\Enums\UserRole;
 use App\Models\Scopes\UserScope;
 use App\Traits\MediaTrait;
@@ -42,6 +43,7 @@ class User extends Authenticatable implements HasMedia
         'password' => 'hashed',
         'status' => 'boolean',
         'role' => UserRole::class,
+        'user_agent' => UserAgentEnum::class,
     ];
 
     public function registerMediaCollections(): void

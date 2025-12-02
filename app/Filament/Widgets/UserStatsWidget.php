@@ -14,7 +14,6 @@ class UserStatsWidget extends StatsOverviewWidget
     protected function getStats(): array
     {
         return Cache::remember('users-stats', now()->addMinutes(5), function () {
-
             return [
                 Stat::make(
                     'Total Registered Users',

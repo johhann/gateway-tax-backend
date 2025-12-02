@@ -23,7 +23,7 @@ class BookingsPerLocationChart extends ChartWidget
 
             $colorMap = [
                 MeetingType::OnlineCall->value => '#10b981', // Tailwind success (green-500)
-                MeetingType::InPersonMeeting->value => '#f59e0b', // Tailwind warning (amber-500)
+                MeetingType::InPersonMeeting->value => '#b59e0b', // Tailwind warning (amber-500)
             ];
 
             return [

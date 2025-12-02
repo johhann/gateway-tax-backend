@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\InformationSource;
 use App\Enums\ProfileProgressStatus;
 use App\Enums\ProfileUserStatus;
 use App\Enums\UserRole;
@@ -38,12 +39,13 @@ class ProfileFactory extends Factory
             'phone' => $this->faker->phoneNumber,
             'date_of_birth' => $this->faker->dateTimeBetween('-60 years', '-18 years'),
             'zip_code' => $this->faker->postcode,
-            'hear_from' => $this->faker->randomElement(['Social Media', 'Friend', 'Advertisement', 'Website']),
+            'hear_from' => $this->faker->randomElement(InformationSource::cases()),
             'occupation' => $this->faker->jobTitle,
             'self_employment_income' => $this->faker->boolean(60), // 30% chance of true
             'progress_status' => $this->faker->randomElement(ProfileProgressStatus::getValues()),
             'user_status' => $this->faker->randomElement(ProfileUserStatus::getValues()),
             'ssn' => $this->faker->numerify('#########'),
+            'created_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
         ];
     }
 }

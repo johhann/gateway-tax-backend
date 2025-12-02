@@ -5,7 +5,9 @@ namespace App\Providers\Filament;
 use App\Filament\Widgets\BookingsPerLocationChart;
 use App\Filament\Widgets\LastFiveProfilesTable;
 use App\Filament\Widgets\PriorYearTaxRequests;
+use App\Filament\Widgets\ProfileReferralChart;
 use App\Filament\Widgets\ProfilesPerStatusLineChart;
+use App\Filament\Widgets\UserAgentChart;
 use App\Filament\Widgets\UserStatsWidget;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -59,6 +61,8 @@ class AppPanelProvider extends PanelProvider
                 PriorYearTaxRequests::class,
                 ProfilesPerStatusLineChart::class,
                 LastFiveProfilesTable::class,
+                ProfileReferralChart::class,
+                UserAgentChart::class,
             ])
             ->middleware([
                 EncryptCookies::class,
