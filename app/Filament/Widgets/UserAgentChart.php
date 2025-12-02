@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Enums\UserAgentEnum;
+use App\Enums\UserRole;
 use App\Models\User;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\Cache;
@@ -23,6 +24,7 @@ class UserAgentChart extends ChartWidget
 
             // Count profiles grouped by source
             $counts = User::query()
+                ->where('role', UserRole::USER)
                 ->selectRaw('user_agent, COUNT(*) as total')
                 ->groupBy('user_agent')
                 ->pluck('total', 'user_agent')
