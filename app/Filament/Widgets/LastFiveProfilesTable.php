@@ -21,7 +21,7 @@ class LastFiveProfilesTable extends TableWidget
     public function table(Table $table): Table
     {
         return $table
-            ->query(fn (): Builder => Profile::query()->with('assignedTo')->whereNot('status', ProfileUserStatus::DRAFT))
+            ->query(fn (): Builder => Profile::query()->with('assignedTo')->whereNot('status', ProfileUserStatus::DRAFT)->orderBy('created_at', 'desc')->limit(5))
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('id'),
