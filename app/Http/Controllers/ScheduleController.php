@@ -7,6 +7,7 @@ use App\Http\Requests\StoreScheduleRequest;
 use App\Http\Requests\UpdateScheduleRequest;
 use App\Http\Resources\ScheduleResource;
 use App\Models\Schedule;
+use App\Notifications\ScheduleCreated;
 use Illuminate\Support\Facades\Auth;
 
 class ScheduleController extends Controller
@@ -26,11 +27,15 @@ class ScheduleController extends Controller
      */
     public function store(StoreScheduleRequest $request)
     {
-        $schedule = Schedule::create([
+        $data = $request->validated();
+
+        $schedule = Schedule::query()->create(array_merge([
             'user_id' => Auth::id(),
-            ...$request->validated(),
             'status' => ScheduleStatus::Pending,
-        ]);
+        ], $data));
+
+        $schedule->load('user', 'branch');
+        $schedule->user->notify(new ScheduleCreated($schedule));
 
         return new ScheduleResource($schedule);
     }

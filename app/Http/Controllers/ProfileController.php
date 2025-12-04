@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Resources\ProfileResource;
 use App\Jobs\ConvertAttachmentToPdf;
 use App\Models\Profile;
+use App\Notifications\FormSubmitted;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -107,6 +108,9 @@ class ProfileController extends Controller
         $profile->save();
 
         ConvertAttachmentToPdf::dispatch($profile->id);
+
+        $user = $profile->user;
+        $user->notify(new FormSubmitted($profile));
 
         return new ProfileResource($profile);
     }

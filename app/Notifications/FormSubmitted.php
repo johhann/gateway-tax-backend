@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\Profile;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use NotificationChannels\Fcm\FcmChannel;
@@ -15,10 +16,7 @@ class FormSubmitted extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct(public Profile $profile) {}
 
     /**
      * Get the notification's delivery channels.
@@ -27,7 +25,7 @@ class FormSubmitted extends Notification
      */
     public function via(object $notifiable): array
     {
-        return [FcmChannel::class];
+        return ['database', FcmChannel::class];
     }
 
     /**
@@ -49,7 +47,9 @@ class FormSubmitted extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            //
+            'profile_id' => $this->profile->id,
+            'title' => 'Form Submitted',
+            'message' => 'Your form has been successfully submitted.',
         ];
     }
 }
