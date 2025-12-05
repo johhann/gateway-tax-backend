@@ -105,6 +105,7 @@ class ProfileController extends Controller
         }
 
         $profile->user_status = ProfileUserStatus::SUBMITTED;
+        $profile->date_submitted = now();
         $profile->save();
 
         ConvertAttachmentToPdf::dispatch($profile->id);

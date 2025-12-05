@@ -18,10 +18,12 @@ use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SummaryController;
+use App\Http\Controllers\TaxPassController;
 use App\Http\Controllers\TaxRequestController;
 use App\Http\Controllers\TaxStationController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\ResponseMiddleware;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -146,4 +148,10 @@ Route::prefix('v1')->group(function () {
         });
 
     Route::get('review/{id}', [ReviewController::class, '__invoke']);
+
+    Route::post('{year}/Auth/GetToken/', [TaxPassController::class, 'getAccessToken'])->withoutMiddleware(ResponseMiddleware::class);
+    Route::post('GetReturnsForImportList', [TaxPassController::class, 'getReturnsForImportList'])->withoutMiddleware(ResponseMiddleware::class);
+    Route::post('Resource/GetReturnForImport', [TaxPassController::class, 'getReturnForImport'])->withoutMiddleware(ResponseMiddleware::class);
+    Route::post('Resource/PostNewFlagClear', [TaxPassController::class, 'postNewFlagClear'])->withoutMiddleware(ResponseMiddleware::class);
+    Route::post('{year}/Auth/InvalidateAccess', [TaxPassController::class, 'invalidateAccess'])->withoutMiddleware(ResponseMiddleware::class);
 });

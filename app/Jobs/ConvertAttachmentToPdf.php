@@ -66,6 +66,11 @@ class ConvertAttachmentToPdf implements ShouldQueue
 
         /** @var Attachment $attachment */
         foreach ($attachments as $attachment) {
+            if (! $attachment->guid) {
+                $attachment->guid = (string) \Illuminate\Support\Str::uuid();
+                $attachment->save();
+            }
+
             $medias = $attachment->getMedia($attachment->collection_name->value);
             foreach ($medias as $media) {
                 $sourcePath = $media->getPath();

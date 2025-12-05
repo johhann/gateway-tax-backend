@@ -27,6 +27,8 @@ class Profile extends Model
         'progress_status' => ProfileProgressStatus::class,
         'user_status' => ProfileUserStatus::class,
         'date_of_birth' => 'datetime',
+        'date_submitted' => 'datetime',
+        'new_flag' => 'boolean',
     ];
 
     public function address(): HasOne
