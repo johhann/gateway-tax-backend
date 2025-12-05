@@ -15,6 +15,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Str;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 
@@ -67,7 +68,7 @@ class ConvertAttachmentToPdf implements ShouldQueue
         /** @var Attachment $attachment */
         foreach ($attachments as $attachment) {
             if (! $attachment->guid) {
-                $attachment->guid = (string) \Illuminate\Support\Str::uuid();
+                $attachment->guid = (string) Str::uuid();
                 $attachment->save();
             }
 
@@ -92,6 +93,7 @@ class ConvertAttachmentToPdf implements ShouldQueue
                     $pdfAttachment->record_id = $this->profileId;
                     $pdfAttachment->user_id = $attachment->user_id;
                     $pdfAttachment->collection_name = CollectionName::PDFAttachments->value;
+                    $pdfAttachment->guid = (string) Str::uuid();
                     $pdfAttachment->save();
 
                     $pdfAttachment
@@ -102,6 +104,9 @@ class ConvertAttachmentToPdf implements ShouldQueue
                             'source_attachment_id' => $attachment->id,
                         ])
                         ->toMediaCollection(CollectionName::PDFAttachments->value);
+
+                    UploadPdfToFtp::dispatch($pdfAttachment->id);
+
                     @unlink($tmpPdf);
                 }
             }

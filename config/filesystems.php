@@ -60,6 +60,16 @@ return [
             'report' => false,
         ],
 
+        'taxpass_ftp' => [
+            'driver' => 'ftp',
+            'host' => env('TAXPASS_FTP_HOST'),
+            'username' => env('TAXPASS_FTP_USERNAME'),
+            'password' => env('TAXPASS_FTP_PASSWORD'),
+            'root' => env('TAXPASS_FTP_ROOT', '/'),
+            'port' => env('TAXPASS_FTP_PORT', 21),
+            'passive' => env('TAXPASS_FTP_PASSIVE', true),
+        ],
+
     ],
 
     /*
