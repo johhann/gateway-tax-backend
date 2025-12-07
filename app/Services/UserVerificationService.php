@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Emails\SendVerificationCode;
 use App\Models\User;
+use App\Notifications\VerificationCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -20,6 +21,7 @@ final class UserVerificationService
         Cache::put($key, $code, now()->addMinutes($ttl));
 
         Mail::to($user->email)->send(new SendVerificationCode($user, $code));
+        $user->notify(new VerificationCode($user, $code));
 
         return true;
     }
