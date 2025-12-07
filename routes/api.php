@@ -130,11 +130,10 @@ Route::prefix('v1')->group(function () {
         Route::get('schedules', [ScheduleController::class, 'index']);
         Route::post('schedule', [ScheduleController::class, 'store']);
         Route::put('schedule/{schedule}', [ScheduleController::class, 'update']);
-
-        Route::post('fcm-token', [FcmController::class, '__invoke']);
-
         Route::post('submit/{id}', [ProfileController::class, 'submitProfile']);
     });
+
+    Route::middleware(['auth:sanctum'])->post('fcm-token', [FcmController::class, '__invoke']);
 
     /**
      * Notifications
