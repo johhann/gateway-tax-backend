@@ -17,8 +17,6 @@ class StateValidation implements ValidationRule
     {
         $states = StateEnum::values();
 
-        \Illuminate\Log\log()->info('Validating state:', ['value' => $value, 'valid_states' => $states]);
-
         if (! in_array($value, $states)) {
             $fail('The selected state is invalid.');
         }
