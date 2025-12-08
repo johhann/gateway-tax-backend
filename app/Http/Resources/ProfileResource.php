@@ -32,6 +32,7 @@ class ProfileResource extends JsonResource
             'dependants' => DepandantResource::collection($this->whenLoaded('dependants')),
             'identification' => new IdentificationResource($this->whenLoaded('identification')),
             'payment' => new PaymentResource($this->whenLoaded('payment')),
+            'user_status' => $this->resource->user_status,
         ];
     }
 }
