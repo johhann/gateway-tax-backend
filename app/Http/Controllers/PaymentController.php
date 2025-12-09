@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\RefundMethod;
 use App\Http\Requests\StorePaymentRequest;
 use App\Http\Requests\UpdatePaymentRequest;
 use App\Http\Resources\PaymentResource;
@@ -15,14 +16,26 @@ class PaymentController extends Controller
     public function store(StorePaymentRequest $request)
     {
         $data = $request->validated();
-        $checkAttachment = $data['direct_deposit_info']['check_id'];
-        unset($data['direct_deposit_info']['check_id']);
+        $checkAttachment = null;
+
+        // Conditionally process direct deposit info only if refund_method indicates direct deposit
+        if (isset($data['refund_method']) && $data['refund_method'] === RefundMethod::DirectDeposit->value) {
+            if (! isset($data['direct_deposit_info']['check_id'])) {
+                return response()->json(['data' => ['error' => 'Check ID is required for direct deposit.']], 422);
+            }
+            $checkAttachment = $data['direct_deposit_info']['check_id'];
+            unset($data['direct_deposit_info']['check_id']);
+        }
 
         $payment = Payment::query()->updateOrCreate(
             ['profile_id' => $data['profile_id']],
             $data
         );
-        $payment->attachAttachments($checkAttachment);
+
+        // Attach attachment only if it exists (i.e., for direct deposit)
+        if ($checkAttachment) {
+            $payment->attachAttachments($checkAttachment);
+        }
 
         return (new PaymentResource($payment->load(['attachment'])))->response()->setStatusCode(201);
     }
