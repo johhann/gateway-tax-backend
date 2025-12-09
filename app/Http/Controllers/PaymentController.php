@@ -17,6 +17,7 @@ class PaymentController extends Controller
     {
         $data = $request->validated();
         $checkAttachment = null;
+        $additionalData = [];
 
         // Conditionally process direct deposit info only if refund_method indicates direct deposit
         if (isset($data['refund_method']) && $data['refund_method'] === RefundMethod::DirectDeposit->value) {
@@ -25,7 +26,14 @@ class PaymentController extends Controller
             }
             $checkAttachment = $data['direct_deposit_info']['check_id'];
             unset($data['direct_deposit_info']['check_id']);
+            $additionalData = $data['direct_deposit_info'];
+            unset($data['direct_deposit_info']);
+        } elseif (isset($data['refund_method']) && $data['refund_method'] === RefundMethod::PickupAtOffice->value) {
+            $additionalData = $data['pickup_info'];
+            unset($data['pickup_info']);
         }
+
+        $data = array_merge($data, ['data' => $additionalData]);
 
         $payment = Payment::query()->updateOrCreate(
             ['profile_id' => $data['profile_id']],
@@ -66,8 +74,22 @@ class PaymentController extends Controller
         }
 
         $data = $request->validated();
-        $checkAttachment = $data['direct_deposit_info.check_id'] ?? null;
-        unset($data['direct_deposit_info.check_id']);
+        $additionalData = [];
+
+        // Conditionally process direct deposit info only if refund_method indicates direct deposit
+        if (isset($data['refund_method']) && $data['refund_method'] === RefundMethod::DirectDeposit->value) {
+            $checkAttachment = $data['direct_deposit_info']['check_id'] ?? null;
+            if ($checkAttachment) {
+                unset($data['direct_deposit_info']['check_id']);
+            }
+            $additionalData = $data['direct_deposit_info'];
+            unset($data['direct_deposit_info']);
+        } elseif (isset($data['refund_method']) && $data['refund_method'] === RefundMethod::PickupAtOffice->value) {
+            $additionalData = $data['pickup_info'];
+            unset($data['pickup_info']);
+        }
+
+        $data = array_merge($data, ['data' => $additionalData]);
 
         $payment->fill($data);
         if ($checkAttachment) {
@@ -77,6 +99,8 @@ class PaymentController extends Controller
         }
 
         $payment->save();
+
+        $payment->refresh();
 
         return new PaymentResource($payment->load(['attachment']));
     }

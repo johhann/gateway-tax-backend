@@ -34,8 +34,9 @@ class StorePaymentRequest extends FormRequest
 
             'direct_deposit_info' => [
                 Rule::requiredIf(
-                    fn () => $this->input('refund_method') === RefundMethod::DirectDeposit->value ||
-                        $this->input('refund_fee') === RefundFee::DirectDeposit->value
+                    fn () => $this->input('refund_method') === RefundMethod::DirectDeposit->value
+                    // ||
+                    // $this->input('refund_fee') === RefundFee::DirectDeposit->value
                 ),
                 'array',
             ],
@@ -49,6 +50,16 @@ class StorePaymentRequest extends FormRequest
             'direct_deposit_info.check_id' => ['required_with:direct_deposit_info', Rule::exists('attachments', 'id')->where(function ($query) {
                 $query->where('collection_name', CollectionName::Check);
             })],
+
+            'pickup_info' => [
+                Rule::requiredIf(
+                    fn () => $this->input('refund_method') === RefundMethod::PickupAtOffice->value
+                ),
+                'array',
+            ],
+
+            'pickup_info.branch_id' => ['required_with:pickup_info', 'exists:branches,id'],
+            'pickup_info.appointment_date' => ['required_with:pickup_info', 'date_format:Y-m-d'],
 
             'refund_fee' => ['required_without_all:type,refund_method', 'string', Rule::in(RefundFee::values())],
             'profile_id' => ['required', 'exists:profiles,id'],

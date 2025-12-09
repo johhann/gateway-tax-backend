@@ -17,6 +17,7 @@ class Payment extends Model
     protected $casts = [
         'type' => 'json',
         'direct_deposit_info' => 'json',
+        'data' => 'json',
     ];
 
     public function profile(): BelongsTo
