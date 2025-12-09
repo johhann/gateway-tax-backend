@@ -29,16 +29,8 @@ class StorePaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type' => [
-                'required_without_all:refund_method,refund_fee',
-                'string',
-                Rule::in(RefundType::values()),
-            ],
-            'refund_method' => [
-                'required_without_all:type,refund_fee',
-                'string',
-                Rule::in(RefundMethod::values()),
-            ],
+            'type' => ['required_without_all:refund_method,refund_fee', 'string', Rule::in(RefundType::values())],
+            'refund_method' => ['required_without_all:type,refund_fee', 'string', Rule::in(RefundMethod::values())],
 
             'direct_deposit_info' => [
                 Rule::requiredIf(
@@ -48,47 +40,18 @@ class StorePaymentRequest extends FormRequest
                 'array',
             ],
 
-            'direct_deposit_info.bank_name' => [
-                'required_if:refund_method,'.RefundMethod::DirectDeposit->value,
-                'string',
-            ],
-            'direct_deposit_info.account_type' => [
-                'required_if:refund_method,'.RefundMethod::DirectDeposit->value,
-                'string',
-                Rule::in(DirectDepositAccountType::values()),
-            ],
-            'direct_deposit_info.account_holder' => [
-                'required_if:refund_method,'.RefundMethod::DirectDeposit->value,
-                'string',
-            ],
-            'direct_deposit_info.routing_number' => [
-                'required_if:refund_method,'.RefundMethod::DirectDeposit->value,
-                'string',
-            ],
-            'direct_deposit_info.account_number' => [
-                'required_if:refund_method,'.RefundMethod::DirectDeposit->value,
-                'string',
-            ],
-            'direct_deposit_info.branch_code' => [
-                'nullable',
-                'string',
-            ],
-            'direct_deposit_info.check_id' => [
-                'required_if:refund_method,'.RefundMethod::DirectDeposit->value,
-                Rule::exists('attachments', 'id')->where(
-                    fn ($query) => $query->where('collection_name', CollectionName::Check)
-                ),
-            ],
+            'direct_deposit_info.bank_name' => ['required_with:direct_deposit_info', 'string'],
+            'direct_deposit_info.account_type' => ['required_with:direct_deposit_info', 'string', Rule::in(DirectDepositAccountType::values())],
+            'direct_deposit_info.account_holder' => ['required_with:direct_deposit_info', 'string'],
+            'direct_deposit_info.routing_number' => ['required_with:direct_deposit_info', 'string'],
+            'direct_deposit_info.account_number' => ['required_with:direct_deposit_info', 'string'],
+            'direct_deposit_info.branch_code' => ['nullable', 'string'],
+            'direct_deposit_info.check_id' => ['required_with:direct_deposit_info', Rule::exists('attachments', 'id')->where(function ($query) {
+                $query->where('collection_name', CollectionName::Check);
+            })],
 
-            'refund_fee' => [
-                'required_without_all:type,refund_method',
-                'string',
-                Rule::in(RefundFee::values()),
-            ],
-            'profile_id' => [
-                'required',
-                'exists:profiles,id',
-            ],
+            'refund_fee' => ['required_without_all:type,refund_method', 'string', Rule::in(RefundFee::values())],
+            'profile_id' => ['required', 'exists:profiles,id'],
         ];
     }
 }
