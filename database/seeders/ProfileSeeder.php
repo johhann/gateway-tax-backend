@@ -118,7 +118,7 @@ class ProfileSeeder extends Seeder
             $profile->payment()->create([
                 'type' => fake()->randomElements(RefundType::cases(), 2),
                 'refund_method' => $refundMethod = fake()->randomElement(RefundMethod::cases()),
-                'direct_deposit_info' => $refundMethod === RefundMethod::DirectDeposit ? [
+                'data' => $refundMethod === RefundMethod::DirectDeposit ? [
                     'bank_name' => fake()->company(),
                     'account_type' => fake()->randomElement(DirectDepositAccountType::cases()),
                     'account_number' => fake()->numerify('##########'),

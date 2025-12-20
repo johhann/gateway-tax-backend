@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\FilingStatus;
 use App\Enums\GrantType;
+use App\Enums\InformationSource;
+use App\Enums\LicenseType;
 use App\Models\Profile;
 use App\Models\Scopes\ProfileScope;
 use App\Models\User;
@@ -12,34 +15,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Validation\Rule;
 use Laravel\Sanctum\PersonalAccessToken;
-use SimpleXMLElement;
+use Spatie\ArrayToXml\ArrayToXml;
 
 class TaxPassController extends Controller
 {
-    /**
-     * @throws \Exception
-     */
-    private function arrayToXml($data, $rootElement = null, $xml = null)
-    {
-        if ($xml === null) {
-            $xml = new SimpleXMLElement($rootElement ? "<$rootElement/>" : '<root/>');
-        }
-
-        foreach ($data as $key => $value) {
-            if (is_array($value)) {
-                if (is_numeric($key)) {
-                    $this->arrayToXml($value, $key, $xml->addChild('item'));
-                } else {
-                    $this->arrayToXml($value, $key, $xml->addChild($key));
-                }
-            } else {
-                $xml->addChild($key, htmlspecialchars($value));
-            }
-        }
-
-        return $xml->asXML();
-    }
-
     private function responseXml($content)
     {
         return Response::make($content, 200, [
@@ -49,14 +28,18 @@ class TaxPassController extends Controller
 
     private function errorResponse($error, $description)
     {
-        $xml = <<<XML
-<ErrorResponse xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.datacontract.org/2004/07/PetzAuth.Models">
-    <error>{$error}</error>
-    <error_description>{$description}</error_description>
-    <hint />
-    <inner_description />
-</ErrorResponse>
-XML;
+        $data = [
+            '_attributes' => [
+                'xmlns:i' => 'http://www.w3.org/2001/XMLSchema-instance',
+                'xmlns' => 'http://schemas.datacontract.org/2004/07/PetzAuth.Models',
+            ],
+            'error' => $error,
+            'error_description' => $description,
+            'hint' => '',
+            'inner_description' => '',
+        ];
+
+        $xml = ArrayToXml::convert($data, 'ErrorResponse');
 
         return $this->responseXml($xml);
     }
@@ -64,118 +47,177 @@ XML;
     public function getAccessToken(Request $request)
     {
         $validated = $request->validate([
-            'username' => 'required|string',
+            'username' => 'string',
+            'email' => 'required|string|email',
             'password' => 'required|string',
-            'client_id' => 'required|integer',
-            'grant_type' => ['required', Rule::in(GrantType::values())],
+            'client_id' => 'integer',
+            'grant_type' => [Rule::in(GrantType::values())],
         ]);
 
-        $username = $validated['username'];
+        $email = $validated['email'];
+        //        $username = $validated['username'];
         $password = $validated['password'];
-        $clientId = $validated['client_id'];
-        $grantType = $validated['grant_type'];
+        //        $clientId = $validated['client_id'];
+        $grantType = $validated['grant_type'] ?? GrantType::PASSWORD->value;
 
         if ($grantType !== GrantType::PASSWORD->value) {
             return $this->errorResponse('unsupported_grant_type', 'Only password grant type is supported');
         }
 
-        $user = User::where('id', $clientId)->first();
+        $user = User::where('email', $email)->first();
 
         if (! $user || ! Hash::check($password, $user->password)) {
             return $this->errorResponse('invalid_client', 'User authentication failed');
         }
 
-        $tokens = UserTokenService::getTokens($user);
+        $tokens = UserTokenService::createGrantTokens($user);
 
-        $xml = <<<XML
-<TokenDTO xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.datacontract.org/2004/07/AppServices.Models.DTO">
-  <access_token>{$tokens['access_token']}</access_token>
-  <expires_in>1800</expires_in>
-  <refresh_token>{$tokens['refresh_token']}</refresh_token>
-  <token_type>{$grantType}</token_type>
-</TokenDTO>
-XML;
+        $data = [
+            '_attributes' => [
+                'xmlns:i' => 'http://www.w3.org/2001/XMLSchema-instance',
+                'xmlns' => 'http://schemas.datacontract.org/2004/07/AppServices.Models.DTO',
+            ],
+            'access_token' => $tokens['access_token'],
+            'expires_in' => (int) config('sanctum.access_token'),
+            'refresh_token' => $tokens['refresh_token'],
+            'token_type' => $grantType,
+        ];
+
+        $xml = ArrayToXml::convert($data, 'TokenDTO');
 
         return $this->responseXml($xml);
     }
 
+    public function getAccessTokenJson(Request $request)
+    {
+        $validated = $request->validate([
+            'username' => 'string',
+            'email' => 'required|string|email',
+            'password' => 'required|string',
+            'client_id' => 'integer',
+            'grant_type' => [Rule::in(GrantType::values())],
+        ]);
+
+        $email = $validated['email'];
+        //        $username = $validated['username'];
+        $password = $validated['password'];
+        //        $clientId = $validated['client_id'];
+        $grantType = $validated['grant_type'] ?? GrantType::PASSWORD->value;
+
+        if ($grantType !== GrantType::PASSWORD->value) {
+            return response()->json([
+                'error' => 'unsupported_grant_type',
+                'error_description' => 'Only password grant type is supported',
+            ], 400);
+        }
+
+        $user = User::where('email', $email)->first();
+
+        if (! $user || ! Hash::check($password, $user->password)) {
+            return response()->json([
+                'error' => 'invalid_client',
+                'error_description' => 'User authentication failed',
+            ], 401);
+        }
+
+        $tokens = UserTokenService::createGrantTokens($user);
+
+        $data = [
+            'access_token' => $tokens['access_token'],
+            //            'expires_in'    => (int) config('sanctum.access_token'),
+            //            'refresh_token' => $tokens['refresh_token'],
+            //            'token_type'    => $grantType,
+        ];
+
+        //        $xml = ArrayToXml::convert($data, 'TokenDTO');
+
+        return response()->json($data);
+    }
+
     public function getReturnsForImportList(Request $request)
     {
-        $accessToken = $request->input('access_token');
+        //        $accessToken = $request->input('access_token');
         $season = $request->input('season');
         $userId = $request->input('user_id');
         $eroId = $request->input('eroId');
+        $efin = $request->input('efin');
 
-        if (! $accessToken) {
-            return $this->errorResponse('invalid_grant', 'Login session has timed out');
-        }
-
-        $tokenModel = PersonalAccessToken::findToken($accessToken);
-        if (! $tokenModel || $tokenModel->cant('access-token')) {
-            return $this->errorResponse('invalid_grant', 'Invalid or expired access token');
-        }
+        //        if (! $accessToken) {
+        //            return $this->errorResponse('invalid_grant', 'Login session has timed out');
+        //        }
+        //
+        //        $tokenModel = PersonalAccessToken::findToken($accessToken);
+        //        if (! $tokenModel || $tokenModel->cant('access-token')) {
+        //            return $this->errorResponse('invalid_grant', 'Invalid or expired access token');
+        //        }
 
         /** @var Profile $profiles */
         $profiles = Profile::query()
             ->withoutGlobalScope(ProfileScope::class)
             ->with(['legal'])
-            ->whereYear('created_at', $season)
-            ->where('user_id', $userId)
+//            ->whereYear('created_at', $season)
+//            ->where('user_id', $userId)
             ->get();
 
-        $resultsXml = '';
+        $results = [];
         foreach ($profiles as $profile) {
-            $filingStatus = $profile->legal?->filing_status ?? '';
-            $dateImported = $profile->created_at?->toIso8601String() ?? '';
-            $dateSubmitted = $profile->date_submitted?->toIso8601String() ?? '';
-            $newFlag = $profile->new_flag ? 'Y' : 'N';
+            $filingStatus = FilingStatus::tryFrom($profile->legal?->filing_status)?->getInt() ?? '';
+            $dateImported = $profile->created_at?->format('Y-m-d') ?? '';
+            $dateSubmitted = $profile->date_submitted?->format('Y-m-d') ?? '';
+            $newFlag = $profile->new_flag ? 1 : 0;
 
-            $resultsXml .= "<TaxReturnMetaData>
-      <dateImported>{$dateImported}</dateImported>
-      <dateSubmitted>{$dateSubmitted}</dateSubmitted>
-      <filingStatus>{$filingStatus}</filingStatus>
-      <firstName>{$profile->first_name}</firstName>
-      <lastName>{$profile->last_name}</lastName>
-      <message></message>
-      <newFlag>{$newFlag}</newFlag>
-      <ssn>{$profile->ssn}</ssn>
-    </TaxReturnMetaData>";
+            $results[] = [
+                'dateImported' => $dateImported,
+                'dateSubmitted' => $dateSubmitted,
+                'filingStatus' => $filingStatus,
+                'firstName' => $profile->first_name,
+                'lastName' => $profile->last_name,
+                'message' => 0,
+                'newFlag' => $newFlag,
+                'ssn' => $profile->ssn,
+            ];
         }
 
-        $totalCount = $profiles->count();
-        $xml = <<<XML
-<ImportReturnListResponse xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.datacontract.org/2004/07/PetzAuth.Models.Responses">
-  <totalCount>{$totalCount}</totalCount>
-  <results>
-    {$resultsXml}
-  </results>
-</ImportReturnListResponse>
-XML;
+        $data = [
+            '_attributes' => [
+                'xmlns:i' => 'http://www.w3.org/2001/XMLSchema-instance',
+                'xmlns' => 'https://github.com/spatie/array-to-xml',
+            ],
+            'results' => [
+                'TaxReturnMetaData' => $results,
+            ],
+            'totalCount' => $profiles->count(),
+        ];
+
+        $xml = ArrayToXml::convert($data, 'ImportReturnListResponse');
 
         return $this->responseXml($xml);
     }
 
     public function getReturnForImport(Request $request)
     {
-        $accessToken = $request->input('access_token');
+        //        $accessToken = $request->input('access_token');
         $ssn = $request->input('ssn');
-        $season = $request->input('season');
-        $userId = $request->input('user_id');
-        $login = $request->input('login');
-        $eroId = $request->input('eroId');
+        //        $season = $request->input('season');
+        //        $userId = $request->input('user_id');
+        //        $login = $request->input('login');
+        //        $eroId = $request->input('eroId');
 
-        if (! $accessToken) {
-            return $this->errorResponse('invalid_grant', 'Login session has timed out');
-        }
-
-        $tokenModel = PersonalAccessToken::findToken($accessToken);
-        if (! $tokenModel || $tokenModel->cant('access-token')) {
-            return $this->errorResponse('invalid_grant', 'Invalid or expired access token');
-        }
+        //        if (! $accessToken) {
+        //            return $this->errorResponse('invalid_grant', 'Login session has timed out');
+        //        }
+        //
+        //        $tokenModel = PersonalAccessToken::findToken($accessToken);
+        //        if (! $tokenModel || $tokenModel->cant('access-token')) {
+        //            return $this->errorResponse('invalid_grant', 'Invalid or expired access token');
+        //        }
 
         $profile = Profile::query()
             ->withoutGlobalScope(ProfileScope::class)
             ->with([
+                'business',
+                'identification',
+                'payment',
                 'legal',
                 'address',
                 'dependants',
@@ -188,111 +230,162 @@ XML;
                 'documents.misc',
             ])
             ->where('ssn', $ssn)
-            ->whereYear('created_at', $season)
-            ->where('user_id', $userId)
+//            ->whereYear('created_at', $season)
+//            ->where('user_id', $userId)
             ->first();
 
         if (! $profile) {
-            return $this->errorResponse('not_found', 'Tax return not found');
+            return $this->errorResponse('not_found', 'Please provide Valid ssn');
         }
 
         $val = fn ($v) => htmlspecialchars($v ?? '');
 
-        $dependentsXml = '';
+        $dependents = [];
         if ($profile->dependants) {
             foreach ($profile->dependants as $dep) {
-                $dob = $dep->date_of_birth ?: '';
-                $dependentsXml .= "<DependentInfoReturn>
-      <birthdate>{$val($dob)}</birthdate>
-      <firstName>{$val($dep->first_name)}</firstName>
-      <lastName>{$val($dep->last_name)}</lastName>
-      <relation>{$val($dep->relationship)}</relation>
-      <ssn>{$val($dep->social_security_number)}</ssn>
-    </DependentInfoReturn>";
+                $dependents[] = [
+                    'firstName' => $val($dep->first_name),
+                    'lastName' => $val($dep->last_name),
+                    'birthdate' => $val(date('Y-m-d', strtotime($dep->date_of_birth))),
+                    'relation' => $val($dep->relationship),
+                    'ssn' => $val($dep->social_security_number),
+                ];
             }
         }
 
-        $scannedDocsXml = '';
-        $addDoc = function ($attachment, $docType) use (&$scannedDocsXml, $val) {
+        $scannedDocs = [];
+        $addDoc = function ($attachment, $docType) use (&$scannedDocs, $val) {
             if ($attachment) {
                 $guid = $val($attachment->guid);
                 $mediaItem = $attachment->getFirstMedia($attachment->collection_name->value ?? 'default');
-                $fileName = $mediaItem ? $mediaItem->file_name : 'document.pdf';
-                $modifiedDate = $attachment->updated_at ? $attachment->updated_at->toIso8601String() : '';
+                $base64 = $mediaItem ? base64_encode($mediaItem->getStream()->getContents()) : '';
+                $modifiedDate = $attachment->updated_at ? $attachment->updated_at->format('Y-m-d') : '';
 
-                $scannedDocsXml .= "<ScannedDocumentReturn>
-      <docType>{$docType}</docType>
-      <docDescription>{$val($fileName)}</docDescription>
-      <guid>{$guid}</guid>
-      <ftpFileName>{$val($fileName)}</ftpFileName>
-      <modifiedDate>{$modifiedDate}</modifiedDate>
-    </ScannedDocumentReturn>";
+                $scannedDocs[] = [
+                    'docType' => $docType,
+                    'guid' => $guid,
+                    'imageData' => $base64,
+                    'modifiedDate' => $modifiedDate,
+                ];
             }
         };
 
         if ($profile->documents) {
             $d = $profile->documents;
-            $addDoc($d->w2, '04');
-            $addDoc($d->misc1099, '05');
-            $addDoc($d->mortgageStatement, '07');
-            $addDoc($d->tuitionStatement, '06');
-            $addDoc($d->sharedRiders, '03');
-            $addDoc($d->misc, '03');
+            $addDoc($d->w2, 'w2');
+            $addDoc($d->misc1099, 'misc_1099');
+            $addDoc($d->mortgageStatement, 'mortgage_statement');
+            $addDoc($d->tuitionStatement, 'tuition_statement');
+            $addDoc($d->sharedRiders, 'shared_riders');
+            $addDoc($d->misc, 'misc');
         }
 
         $dobP = $profile->date_of_birth ?: '';
 
-        $filingStatusId = $profile->legal?->filing_status ?? '';
+        $filingStatusId = FilingStatus::tryFrom($profile->legal?->filing_status)?->getInt() ?? '';
 
-        $addr = $profile->address;
-        $address = $addr ? $addr->address : '';
-        $city = $addr ? $addr->city : '';
-        $state = $addr ? $addr->state : '';
-        $zip = $profile->zip_code;
+        $data = $profile->payment->data;
 
-        $xml = <<<XML
-<ImportTaxpayerReturnResponse xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.datacontract.org/2004/07/PetzAuth.Models.Responses">
-  <FilingStatusId>{$val($filingStatusId)}</FilingStatusId>
-  <Primary_FirstName>{$val($profile->first_name)}</Primary_FirstName>
-  <Primary_LastName>{$val($profile->last_name)}</Primary_LastName>
-  <Primary_SSN>{$val($profile->ssn)}</Primary_SSN>
-  <Primary_EmailAddress>{$val($profile->user?->email)}</Primary_EmailAddress>
-  <Primary_Birthdate>{$val($dobP)}</Primary_Birthdate>
-  <Primary_CellPhone>{$val($profile->phone)}</Primary_CellPhone>
-  <Primary_Occupation>{$val($profile->occupation)}</Primary_Occupation>
+        $null = [
+            '_attributes' => [
+                'i:nil' => 'true',
+            ],
+        ];
 
-  <Address>{$val($address)}</Address>
-  <City>{$val($city)}</City>
-  <State>{$val($state)}</State>
-  <ZipCode>{$val($zip)}</ZipCode>
+        $data = [
+            '_attributes' => [
+                'xmlns:i' => 'http://www.w3.org/2001/XMLSchema-instance',
+                'xmlns' => 'https://github.com/spatie/array-to-xml',
+            ],
+            'FilingStatusId' => $val($filingStatusId),
+            'newFlag' => $val($profile->new_flag ? 1 : 0),
+            'Primary_Carrier' => $null,
+            'Primary_EmailAddress' => $val($profile->user?->email),
+            'Primary_Contact' => $null,
+            'Primary_FirstName' => $val($profile->first_name),
+            'Primary_MiddleInitial' => $profile->middle_name ? $val(substr($profile->middle_name, 0, 1)) : $null,
+            'Primary_LastName' => $val($profile->last_name),
+            'Primary_Birthdate' => $val($dobP),
+            'Primary_SSN' => $val($profile->ssn),
+            'Primary_CellPhone' => $val($profile->phone),
+            'Primary_HomePhone' => $profile->business?->home_phone ? $val($profile->business->home_phone) : $null,
+            'Primary_WorkPhone' => $profile->business?->work_phone ? $val($profile->business->work_phone) : $null,
+            'Primary_IdExpDate' => $profile->identification->license_expiration_date ? $val($profile->identification->license_expiration_date->toDateString()) : '',
+            'Primary_IdIssDate' => $profile->identification->license_issue_date ? $val($profile->identification->license_issue_date->toDateString()) : '',
+            'Primary_IdNumber' => $val($profile->identification->license_number),
+            'Primary_IdState' => $val($profile->identification->issuing_state->value),
+            'Primary_IdType' => LicenseType::tryFrom($profile->identification->license_type->value)?->getInt() ?? '',
+            'Primary_Occupation' => $val($profile->occupation),
+            'Primary_Language' => $null,
+            'Primary_Text' => $null,
+            'Primary_isBlind' => $null,
+            'Primary_isDependent' => $null,
+            'Primary_isDisabled' => $null,
+            'Primary_isUSCitizen' => $null,
+            'ReferralDescription' => $null,
+            'ReferralType' => $null,
+            'Secondary_Carrier' => $null,
+            'Secondary_CellPhone' => $null,
+            'Secondary_Contact' => $null,
+            'Secondary_EmailAddress' => $null,
+            'Secondary_FirstName' => $null,
+            'Secondary_MiddleInitial' => $null,
+            'Secondary_LastName' => $null,
+            'Secondary_Birthdate' => $null,
+            'Secondary_SSN' => $null,
+            'Secondary_Occupation' => $null,
+            'Secondary_HomePhone' => $null,
+            'Secondary_IdExpDate' => $null,
+            'Secondary_IdIssDate' => $null,
+            'Secondary_IdNumber' => $null,
+            'Secondary_IdState' => $null,
+            'Secondary_IdType' => $null,
+            'Secondary_Language' => $null,
+            'Secondary_Text' => $null,
+            'Secondary_WorkPhone' => $null,
+            'Secondary_isBlind' => $null,
+            'Secondary_isDependent' => $null,
+            'Secondary_isDisabled' => $null,
+            'Secondary_isUSCitizen' => $null,
+            'Address' => $val($profile->business?->address_line_one),
+            'AddressCont' => $profile->business?->address_line_two ? $val($profile->business?->address_line_two) : $null,
+            'City' => $val($profile->business?->city),
+            'State' => $val($profile->business?->state),
+            'ZipCode' => $val($profile->business?->zip_code),
+            'LastYearFiled' => $val($profile->business?->file_taxed_for_tax_year ? 1 : 0),
+            'HearAbout' => InformationSource::tryFrom($profile->hear_from)?->getInt() ?? '',
+            'BankName' => $data['bank_name'] ?? $null,
+            'RoutingNumber' => $data['routing_number'] ?? $null,
+            'AccountNumber' => $data['account_number'] ?? $null,
+            'AccountType' => $data['account_type'] ?? $null,
+            'CheckingAccount' => $data && $data['account_type'] === 'checking' ? 'X' : $null,
+            'Dependents' => [
+                'DependentInfoReturn' => $dependents,
+            ],
+            'ScannedDocuments' => [
+                'ScannedDocumentReturn' => $scannedDocs,
+            ],
+        ];
 
-  <Dependents>
-    {$dependentsXml}
-  </Dependents>
-  <W2Documents>
-  </W2Documents>
-  <ScannedDocuments>
-    {$scannedDocsXml}
-  </ScannedDocuments>
-</ImportTaxpayerReturnResponse>
-XML;
+        $xml = ArrayToXml::convert($data, 'ImportTaxpayerReturnResponse');
 
         return $this->responseXml($xml);
     }
 
     public function postNewFlagClear(Request $request)
     {
-        $accessToken = $request->input('access_token');
+        //        $accessToken = $request->input('access_token');
         $ssn = $request->input('ssn');
+        $statusId = $request->input('statusId');
 
-        if (! $accessToken) {
-            return $this->errorResponse('invalid_grant', 'Login session has timed out');
-        }
+        //        if (! $accessToken) {
+        //            return $this->errorResponse('invalid_grant', 'Login session has timed out');
+        //        }
 
-        $tokenModel = PersonalAccessToken::findToken($accessToken);
-        if (! $tokenModel) {
-            return $this->errorResponse('invalid_grant', 'Invalid or expired access token');
-        }
+        //        $tokenModel = PersonalAccessToken::findToken($accessToken);
+        //        if (! $tokenModel) {
+        //            return $this->errorResponse('invalid_grant', 'Invalid or expired access token');
+        //        }
 
         $profile = Profile::query()
             ->withoutGlobalScope(ProfileScope::class)
@@ -300,7 +393,7 @@ XML;
             ->first();
 
         if (! $profile) {
-            return $this->errorResponse('not_found', 'Tax return not found');
+            return $this->errorResponse('not_found', 'Please provide Valid ssn');
         }
 
         $profile->new_flag = false;

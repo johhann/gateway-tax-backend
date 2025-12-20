@@ -32,7 +32,7 @@ class ProfileFactory extends Factory
             'user_id' => $this->faker->unique()->randomElement($users),
             'tax_station_id' => $this->faker->randomElement($taxStations),
             'assigned_branch_id' => $branch = $this->faker->randomElement([null, $this->faker->randomElement($branches)]),
-            'assigned_user_id' => $branch ? $accountants->where('branch_id', $branch)->random() : null,
+            'assigned_user_id' => $branch ? $accountants->where('branch_id', $branch)?->random() : null,
             'first_name' => $this->faker->firstName,
             'middle_name' => $this->faker->optional()->firstName,
             'last_name' => $this->faker->lastName,
