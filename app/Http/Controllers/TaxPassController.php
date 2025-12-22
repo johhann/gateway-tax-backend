@@ -6,6 +6,7 @@ use App\Enums\FilingStatus;
 use App\Enums\GrantType;
 use App\Enums\InformationSource;
 use App\Enums\LicenseType;
+use App\Models\Attachment;
 use App\Models\Profile;
 use App\Models\Scopes\ProfileScope;
 use App\Models\User;
@@ -13,6 +14,7 @@ use App\Services\UserTokenService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Laravel\Sanctum\PersonalAccessToken;
 use Spatie\ArrayToXml\ArrayToXml;
@@ -190,7 +192,7 @@ class TaxPassController extends Controller
             'results' => [
                 'TaxReturnMetaData' => $results,
             ],
-            'totalCount' => $profiles->count(),
+            'totalCount' => count($profiles),
         ];
 
         $xml = ArrayToXml::convert($data, 'ImportReturnListResponse');
@@ -258,11 +260,19 @@ class TaxPassController extends Controller
         }
 
         $scannedDocs = [];
-        $addDoc = function ($attachment, $docType) use (&$scannedDocs, $val) {
+        $addDoc = function (?Attachment $attachment, $docType) use (&$scannedDocs, $val) {
             if ($attachment) {
                 $guid = $val($attachment->guid);
-                $mediaItem = $attachment->getFirstMedia($attachment->collection_name->value ?? 'default');
-                $base64 = $mediaItem ? base64_encode($mediaItem->getStream()->getContents()) : '';
+
+                $mediaItem = $attachment->getFirstMedia($attachment->collection_name->value);
+                $base64 = '';
+                if (! is_null($mediaItem)) {
+                    $disk = $mediaItem->disk;
+                    $path = $mediaItem->getPathRelativeToRoot();
+
+                    $fileContents = Storage::disk($disk)->get($path);
+                    $base64 = base64_encode($fileContents);
+                }
                 $modifiedDate = $attachment->updated_at ? $attachment->updated_at->format('Y-m-d') : '';
 
                 $scannedDocs[] = [
