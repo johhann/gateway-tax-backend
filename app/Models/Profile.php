@@ -28,6 +28,7 @@ class Profile extends Model
         'user_status' => ProfileUserStatus::class,
         'date_of_birth' => 'datetime',
         'date_submitted' => 'datetime',
+        'date_imported' => 'datetime',
         'new_flag' => 'boolean',
     ];
 

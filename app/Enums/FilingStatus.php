@@ -15,9 +15,9 @@ enum FilingStatus: string
     {
         return match ($this) {
             FilingStatus::Single => 1,
-            FilingStatus::HeadOfHousehold => 2,
-            FilingStatus::MarriedFilingJointly => 3,
-            FilingStatus::MarriedFilingSeparately => 4,
+            FilingStatus::MarriedFilingJointly => 2,
+            FilingStatus::MarriedFilingSeparately => 3,
+            FilingStatus::HeadOfHousehold => 4,
             FilingStatus::QualifyingWidower => 5,
         };
     }

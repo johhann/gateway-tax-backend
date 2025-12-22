@@ -154,8 +154,9 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware(['auth:sanctum', 'ability:grant-access'])->withoutMiddleware(ResponseMiddleware::class)->group(function () {
         Route::post('xmlFilesOnly', [TaxPassController::class, 'getReturnsForImportList']);
+        Route::post('filesByEfin', [TaxPassController::class, 'getReturnsForImportList']);
         Route::post('fileBySsn', [TaxPassController::class, 'getReturnForImport']);
         Route::post('markFileFlagged', [TaxPassController::class, 'postNewFlagClear']);
-        Route::post('{year}/Auth/InvalidateAccess', [TaxPassController::class, 'invalidateAccess']);
+        //        Route::post('{year}/Auth/InvalidateAccess', [TaxPassController::class, 'invalidateAccess']);
     });
 });

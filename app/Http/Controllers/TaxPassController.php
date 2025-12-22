@@ -137,9 +137,9 @@ class TaxPassController extends Controller
     public function getReturnsForImportList(Request $request)
     {
         //        $accessToken = $request->input('access_token');
-        $season = $request->input('season');
-        $userId = $request->input('user_id');
-        $eroId = $request->input('eroId');
+        //        $season = $request->input('season');
+        //        $userId = $request->input('user_id');
+        //        $eroId = $request->input('eroId');
         $efin = $request->input('efin');
 
         //        if (! $accessToken) {
@@ -151,18 +151,22 @@ class TaxPassController extends Controller
         //            return $this->errorResponse('invalid_grant', 'Invalid or expired access token');
         //        }
 
-        /** @var Profile $profiles */
+        /** @var Profile[] $profiles */
         $profiles = Profile::query()
             ->withoutGlobalScope(ProfileScope::class)
             ->with(['legal'])
-//            ->whereYear('created_at', $season)
-//            ->where('user_id', $userId)
+            ->where('date_submitted', '!=', null)
+            ->whereHas('legal', function ($query) use ($efin) {
+                $query->whereHas('branch', function ($q) use ($efin) {
+                    $q->where('efin', $efin);
+                });
+            })
             ->get();
 
         $results = [];
         foreach ($profiles as $profile) {
             $filingStatus = FilingStatus::tryFrom($profile->legal?->filing_status)?->getInt() ?? '';
-            $dateImported = $profile->created_at?->format('Y-m-d') ?? '';
+            $dateImported = $profile->date_imported?->format('Y-m-d') ?? '';
             $dateSubmitted = $profile->date_submitted?->format('Y-m-d') ?? '';
             $newFlag = $profile->new_flag ? 1 : 0;
 
@@ -347,11 +351,11 @@ class TaxPassController extends Controller
             'Secondary_isDependent' => $null,
             'Secondary_isDisabled' => $null,
             'Secondary_isUSCitizen' => $null,
-            'Address' => $val($profile->business?->address_line_one),
-            'AddressCont' => $profile->business?->address_line_two ? $val($profile->business?->address_line_two) : $null,
-            'City' => $val($profile->business?->city),
-            'State' => $val($profile->business?->state),
-            'ZipCode' => $val($profile->business?->zip_code),
+            'Address' => $val($profile->address?->address),
+            'AddressCont' => $profile->address?->apt ? $val($profile->business?->address_line_two) : $null,
+            'City' => $val($profile->address?->city),
+            'State' => $val($profile->address?->state),
+            'ZipCode' => $val($profile->address?->zip_code),
             'LastYearFiled' => $val($profile->business?->file_taxed_for_tax_year ? 1 : 0),
             'HearAbout' => InformationSource::tryFrom($profile->hear_from)?->getInt() ?? '',
             'BankName' => $data['bank_name'] ?? $null,
@@ -397,6 +401,7 @@ class TaxPassController extends Controller
         }
 
         $profile->new_flag = false;
+        $profile->date_imported = now();
         $profile->save();
 
         return response('', 200);
