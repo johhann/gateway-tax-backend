@@ -300,6 +300,8 @@ class TaxPassController extends Controller
 
         $data = $profile->payment->data;
 
+        \Log::debug($data);
+
         $null = [
             '_attributes' => [
                 'i:nil' => 'true',
@@ -371,7 +373,7 @@ class TaxPassController extends Controller
             'BankName' => $data['bank_name'] ?? $null,
             'RoutingNumber' => $data['routing_number'] ?? $null,
             'AccountNumber' => $data['account_number'] ?? $null,
-            'AccountType' => $data['account_type'] ?? $null,
+            'AccountType' => $data && $data['account_type'] ?? $null,
             'CheckingAccount' => $data && $data['account_type'] === 'checking' ? 'X' : $null,
             'Dependents' => [
                 'DependentInfoReturn' => $dependents,
