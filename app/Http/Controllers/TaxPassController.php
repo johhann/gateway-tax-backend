@@ -298,7 +298,7 @@ class TaxPassController extends Controller
 
         $filingStatusId = FilingStatus::tryFrom($profile->legal?->filing_status)?->getInt() ?? '';
 
-        $data = $profile->payment->data;
+        $data = $profile->payment?->data;
 
         \Log::debug($data);
 
