@@ -29,6 +29,7 @@ class StoreIdentificationRequest extends FormRequest
             return array_merge((new StoreAddressRequest)->rules(), [
                 'license_type' => ['required', 'string', Rule::in(LicenseType::values())],
                 'license_number' => 'required|string',
+                'zip_code' => 'nullable|string',
                 'issuing_state' => ['required', 'string', new StateValidation],
                 'license_issue_date' => ['required', 'date', 'before:license_expiration_date', 'before:today'],
                 'license_expiration_date' => ['required', 'date', 'after:license_issue_date', 'after_or_equal:today'],

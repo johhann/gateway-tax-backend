@@ -53,7 +53,7 @@ class StoreLegalRequest extends FormRequest
             'dependants.*.middle_name' => ['nullable', 'string', 'max:100'],
             'dependants.*.date_of_birth' => ['nullable', 'date'],
             'dependants.*.social_security_number' => ['nullable', 'string', 'max:9', 'confirmed'],
-            'dependants.*.occupation' => ['nullable', 'string', 'max:255'],
+            // 'dependants.*.occupation' => ['nullable', 'string', 'max:255'],
             'dependants.*.relationship' => ['nullable', Rule::in(DependantRelationship::cases())],
         ];
     }
