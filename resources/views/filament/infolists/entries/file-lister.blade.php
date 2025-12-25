@@ -95,7 +95,7 @@
     }
 
     .btn-download:hover {
-        background-color: #1d4ed8;
+        background-color: #29a92b;
     }
 
     .no-files {
