@@ -109,7 +109,7 @@ class ProfileInfolist
                         TextEntry::make('business.address_line_one'),
                         TextEntry::make('business.address_line_two'),
                         TextEntry::make('business.website')
-                            ->url(fn ($record) => $record->business['website'])
+                            ->url(fn ($record) => $record->business['website'] ?? null)
                             ->color(Color::Blue),
                         TextEntry::make('business.has_1099_misc')
                             ->state(fn (Profile $record) => $record->business->has_1099_misc ? 'Yes' : 'No'),
