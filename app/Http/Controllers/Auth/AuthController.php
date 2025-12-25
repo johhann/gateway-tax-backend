@@ -47,7 +47,6 @@ class AuthController extends Controller
         $user = User::find(Auth::id());
         UserVerificationService::verify($request);
         UserTokenService::deleteTokens();
-        UserTokenService::getTokens($user);
 
         // mark user as verified
         if (! $user->email_verified_at) {
