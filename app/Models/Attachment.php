@@ -16,6 +16,8 @@ class Attachment extends Model implements HasMedia
     use InteractsWithMedia;
     use SoftDeletes;
 
+    protected $with = ['media'];
+
     protected function casts(): array
     {
         return [

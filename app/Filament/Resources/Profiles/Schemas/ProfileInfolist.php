@@ -6,11 +6,10 @@ use App\Models\Profile;
 use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ViewEntry;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 
@@ -185,8 +184,8 @@ class ProfileInfolist
                             ->state(fn ($record) => $record->date_of_birth),
                         TextEntry::make('dependant.relationship')
                             ->state(fn ($record) => $record->relationship),
-                        TextEntry::make('dependant.occupation')
-                            ->state(fn ($record) => $record->occupation),
+                        // TextEntry::make('dependant.occupation')
+                        //     ->state(fn ($record) => $record->occupation),
                     ])
                     ->extraAttributes([
                         'style' => 'background-color: #fff; @media (prefers-color-scheme: dark) { background-color: #1f2937; }',
@@ -194,16 +193,47 @@ class ProfileInfolist
                     ->columns(3)
                     ->columnSpan(3)
                     ->grow(false),
-
-                // Tabs::make('Tabs')
-                //     ->tabs([
-                //         Tab::make('Legal')
-                //             ->schema([
-
-                //             ]),
-                //     ])
-                //     ->columnSpanFull()
-                //     ->activeTab(1),
+                Fieldset::make('Documents')
+                    ->schema([
+                        ViewEntry::make('documents_w2')
+                            ->label('W2')
+                            ->state(fn ($record) => [
+                                [
+                                    'name' => 'W2 Document',
+                                    'url' => $record->documents?->w2?->media?->first()?->getFullUrl(),
+                                    'media' => $record->documents?->w2?->media?->first(),
+                                ],
+                                [
+                                    'name' => 'Shared Riders Document',
+                                    'url' => $record->documents?->sharedRiders?->media?->first()?->getFullUrl(),
+                                    'media' => $record->documents?->sharedRiders?->media?->first(),
+                                ],
+                                [
+                                    'name' => 'Misc1099 Document',
+                                    'url' => $record->documents?->misc1099?->media?->first()?->getFullUrl(),
+                                    'media' => $record->documents?->misc1099?->media?->first(),
+                                ],
+                                [
+                                    'name' => 'Mortgage Statement Document',
+                                    'url' => $record->documents?->mortgageStatement?->media?->first()?->getFullUrl(),
+                                    'media' => $record->documents?->mortgageStatement?->media?->first(),
+                                ],
+                                [
+                                    'name' => 'Tuition Statement Document',
+                                    'url' => $record->documents?->tuitionStatement?->media?->first()?->getFullUrl(),
+                                    'media' => $record->documents?->tuitionStatement?->media?->first(),
+                                ],
+                                [
+                                    'name' => 'Misc Document',
+                                    'url' => $record->documents?->misc?->media?->first()?->getFullUrl(),
+                                    'media' => $record->documents?->misc?->media?->first(),
+                                ],
+                            ])
+                            ->view('filament.infolists.entries.file-lister')
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(6)
+                    ->columnSpanFull(),
             ]);
     }
 }
