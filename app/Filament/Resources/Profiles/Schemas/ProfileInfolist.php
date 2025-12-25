@@ -112,13 +112,13 @@ class ProfileInfolist
                             ->url(fn ($record) => $record->business['website'] ?? null)
                             ->color(Color::Blue),
                         TextEntry::make('business.has_1099_misc')
-                            ->state(fn (Profile $record) => $record->business->has_1099_misc ? 'Yes' : 'No'),
+                            ->state(fn (Profile $record) => $record->business?->has_1099_misc ? 'Yes' : 'No'),
                         TextEntry::make('business.is_license_requirement')
-                            ->state(fn (Profile $record) => $record->business->is_license_requirement ? 'Yes' : 'No'),
+                            ->state(fn (Profile $record) => $record->business?->is_license_requirement ? 'Yes' : 'No'),
                         TextEntry::make('business.has_business_license')
-                            ->state(fn (Profile $record) => $record->business->has_business_license ? 'Yes' : 'No'),
+                            ->state(fn (Profile $record) => $record->business?->has_business_license ? 'Yes' : 'No'),
                         TextEntry::make('business.file_taxed_for_tax_year')
-                            ->state(fn ($record) => $record->business->file_taxed_for_tax_year ? 'Yes' : 'No'),
+                            ->state(fn ($record) => $record->business?->file_taxed_for_tax_year ? 'Yes' : 'No'),
                         TextEntry::make('business.description'),
                         TextEntry::make('business.business_advertisement'),
                     ])
