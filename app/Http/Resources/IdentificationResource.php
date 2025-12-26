@@ -16,6 +16,7 @@ class IdentificationResource extends JsonResource
     {
         return [
             'id' => $this->resource->id,
+            'zip_code' => $this->resource->zip_code,
             'license_type' => $this->resource->license_type,
             'license_number' => $this->resource->license_number,
             'issuing_state' => $this->resource->issuing_state,
