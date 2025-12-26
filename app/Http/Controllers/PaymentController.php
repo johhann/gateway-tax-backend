@@ -29,8 +29,8 @@ class PaymentController extends Controller
             $additionalData = $data['direct_deposit_info'];
             unset($data['direct_deposit_info']);
         } elseif (isset($data['refund_method']) && $data['refund_method'] === RefundMethod::PickupAtOffice->value) {
-            $additionalData = $data['pickup_info'] ?? [];
-            if (!empty($data['pickup_info'])) unset($data['pickup_info']);
+            $additionalData = $data['pickup_info'];
+            unset($data['pickup_info']);
         }
 
         $data = array_merge($data, ['data' => $additionalData]);
