@@ -22,7 +22,7 @@ class DepandantResource extends JsonResource
             'middle_name' => $this->resource->middle_name,
             'last_name' => $this->resource->last_name,
             'date_of_birth' => $this->resource->date_of_birth,
-            'occupation' => $this->resource->occupation,
+            // 'occupation' => $this->resource->occupation,
             'relationship' => $this->resource->relationship,
         ];
     }
