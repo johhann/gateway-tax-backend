@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Profiles;
 
 use App\Enums\ProfileProgressStatus;
+use App\Enums\ProfileUserStatus;
 use App\Filament\Resources\Profiles\Pages\CreateProfile;
 use App\Filament\Resources\Profiles\Pages\EditProfile;
 use App\Filament\Resources\Profiles\Pages\ListProfiles;
@@ -42,7 +43,7 @@ class ProfileResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        return static::getModel()::whereNot('status', ProfileUserStatus::DRAFT)->count();
     }
 
     public static function form(Schema $schema): Schema
