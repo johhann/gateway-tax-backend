@@ -34,7 +34,7 @@ class IdentificationController extends Controller
 
         $identification = Identification::updateOrCreate([
             'profile_id' => $validated['profile_id'],
-            'zip_code' => $validated['zip_code'],
+            'zip_code' => $validated['zip_code'] ?? null,
             'license_type' => $validated['license_type'],
             'license_number' => $validated['license_number'],
             'issuing_state' => $validated['issuing_state'],
