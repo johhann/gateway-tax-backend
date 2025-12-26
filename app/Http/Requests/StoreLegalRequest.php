@@ -31,7 +31,7 @@ class StoreLegalRequest extends FormRequest
             'social_security_number' => ['required', 'string', 'max:9', 'confirmed'],
             'filing_status' => ['required', Rule::in(FilingStatus::values())],
             'spouse_information' => ['nullable', 'array', Rule::requiredIf(function () {
-                return $this->input('filing_status') === FilingStatus::MarriedFilingJointly->value || $this->input('filing_status') === FilingStatus::MarriedFilingSeparately->value;
+                return $this->input('filing_status') === FilingStatus::MarriedFilingJointly->value || $this->input('filing_status') === FilingStatus::MarriedFilingSeparately->value || $this->input('filing_status') === FilingStatus::QualifyingWidower->value;
             })],
             'spouse_information.first_name' => ['required_with:spouse_information', 'string', 'max:100'],
             'spouse_information.last_name' => ['required_with:spouse_information', 'string', 'max:100'],
