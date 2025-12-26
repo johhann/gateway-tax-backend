@@ -75,6 +75,7 @@ class PaymentController extends Controller
 
         $data = $request->validated();
         $additionalData = [];
+        $checkAttachment = null;
 
         // Conditionally process direct deposit info only if refund_method indicates direct deposit
         if (isset($data['refund_method']) && $data['refund_method'] === RefundMethod::DirectDeposit->value) {
